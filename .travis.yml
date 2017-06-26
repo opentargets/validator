@@ -7,7 +7,7 @@ install:
 script: nosetests
 deploy:
   provider: pypi
-  user: "andreap"
+  user: "${PYPI_USERNAME}"
   password: "${PYPI_PASSWORD}"
   on:
     tags: true
