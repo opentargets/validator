@@ -1,0 +1,7 @@
+__pkgname__ = 'evsvalidator'
+__author__ = 'OpenTargets Core Team <support@targetvalidation.org>'
+__author_email__ = 'support@targetvalidation.org'
+__license__ = 'Apache License, Version 2.0'
+__homepage__ = 'https://github.com/opentargets/evs-validator'
+__version__ = '0.1.0'
+__description__ = 'Evidence validation at targetvalidation.org'
