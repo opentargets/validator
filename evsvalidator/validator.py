@@ -14,7 +14,7 @@ def validate(file_descriptor, schema_uri):
         try:
             parsed_line = json.loads(line)
         except Exception as e:
-            l(logging.ERROR, 'failed parsing line %i: %s', line_counter, e)
+            l.log(logging.ERROR, 'failed parsing line %i: %s', line_counter, e)
 
         t1 = time.time()
         validation_errors = [str(e) for e in validator.iter_errors(parsed_line)]

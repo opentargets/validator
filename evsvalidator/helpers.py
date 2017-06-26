@@ -5,6 +5,8 @@ import jsonschema as jss
 import pkg_resources as res
 import json
 import os
+import gzip
+import zipfile
 from contextlib import contextmanager
 import evsvalidator
 
@@ -42,7 +44,38 @@ def url_to_tmpfile(url, delete=True, *args, **kwargs):
         f.close()
 
 
+class URLZSource(object):
+    def __init__(self, *args, **kwargs):
+        '''A source extension for petl python package
+        Just in case you need to use proxies for url use it as normal
+        named arguments
+        '''
+        self.args = args
+        self.kwargs = kwargs
+        self.proxies = None
 
+    @contextmanager
+    def open(self, mode='r'):
+        if not mode.startswith('r'):
+            raise IOError('source is read-only')
+
+        zf = None
+
+        with url_to_tmpfile(*self.args, **self.kwargs) as f:
+            buf = f
+
+            if self.args[0].endswith('.gz'):
+                zf = gzip.GzipFile(fileobj=buf)
+            elif self.args[0].endswith('.zip'):
+                zipped_data = zipfile.ZipFile(buf)
+                info = zipped_data.getinfo(
+                    zipped_data.filelist[0].orig_filename)
+                zf = zipped_data.open(info)
+            else:
+                zf = buf
+
+            yield zf
+        zf.close()
 
 
 def generate_validator_from_schema(schema_uri):

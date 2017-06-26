@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 # importing __<vars>__ into the namespace
 with open('evsvalidator/version.py') as fv:
@@ -17,7 +17,7 @@ setup(name=__pkgname__,
       download_url=__homepage__ + '/archive/' + __version__ + '.tar.gz',
       keywords=['opentargets', 'bioinformatics', 'python2'],
       platforms=['any'],
-      install_requires=[],
+      install_requires=['requests','jsonschema'],
       dependency_links=[],
       include_package_data=True,
       entry_points={

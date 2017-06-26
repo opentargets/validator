@@ -1,9 +1,10 @@
 from __future__ import print_function, absolute_import
 import argparse
 import logging
+import logging.config
 import sys
 
-from evsvalidator.helpers import file_or_resource, url_to_tmpfile
+from evsvalidator.helpers import file_or_resource, URLZSource
 from evsvalidator.validator import validate
 
 
@@ -38,7 +39,7 @@ def main():
     if args.data_source_file == '-':
         validate(sys.stdin,args.schema)
     else:
-        with url_to_tmpfile(args.data_source_file) as fh:
+        with URLZSource(args.data_source_file).open() as fh:
             validate(fh,args.schema)
     
     return 0
