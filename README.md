@@ -5,11 +5,7 @@ Evidence string validator.
 ## How to install it
 
 ```sh
-wget https://github.com/opentargets/validator/archive/master.zip
-unzip master.zip
-cd validator-master
-python setup.py install
-opentargets_validator -h
+pip install opentargets-validator
 ```
 
 ## How to use it
@@ -41,5 +37,5 @@ opentargets_validator --schema https://raw.githubusercontent.com/opentargets/jso
 
 ### How many lines do you want to get printed?
 
-Using the parameter `--log-lines 100`, `opentargets_validator` will accumulate up to 
+Using the parameter `--log-lines 100`, `opentargets_validator` will accumulate up to
 100 lines and then it will exit.
