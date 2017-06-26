@@ -3,11 +3,14 @@ import logging
 import json
 from helpers import generate_validator_from_schema, LogAccum
 
-def validate(file_descriptor, schema_uri):
+
+def validate(file_descriptor, schema_uri, loglines):
     logger = logging.getLogger(__name__)
-    l = LogAccum(logger)
+    error_lines = abs(loglines)
+    l = LogAccum(logger,error_lines if error_lines < 1024 else 1024)
     line_counter = 1
     parsed_line = None
+    
     validator = generate_validator_from_schema(schema_uri)
 
     for line in file_descriptor:
@@ -33,6 +36,12 @@ def validate(file_descriptor, schema_uri):
             l.log(logging.ERROR, 'failed validating line %i '
                   'eval %s secs with these errors %s',
                   line_counter, str(t2 - t1), error_messages)
+            
+            error_lines -= 1
+            if error_lines <= 0:
+                l.flush(True)
+                logger.warning('too many errors parsing the file, so exiting')
+                return
     
         line_counter += 1
         

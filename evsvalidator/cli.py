@@ -20,8 +20,12 @@ def main():
                         help="set the schema file to use",
                         action='store')
     parser.add_argument("--log-level", dest='loglevel',
-                        help="set the log level",
+                        help="set the log level def: WARNING",
                         action='store', default='WARNING')
+    parser.add_argument("--log-lines", dest='loglines',
+                        help="number of log errors to print out def: 2000",
+                        action='store', type=int, default=2000)
+
     args = parser.parse_args()
 
     if args.loglevel:
@@ -37,9 +41,9 @@ def main():
         return 1
     
     if args.data_source_file == '-':
-        validate(sys.stdin,args.schema)
+        validate(sys.stdin,args.schema, args.loglines)
     else:
-        with URLZSource(args.data_source_file).open() as fh:
+        with URLZSource(args.data_source_file, args.loglines).open() as fh:
             validate(fh,args.schema)
     
     return 0

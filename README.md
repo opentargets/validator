@@ -38,3 +38,8 @@ Using this option you could use these uri formats
 ```sh
 evsvalidator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json https://where/myfile/is/located.json
 ```
+
+### How many lines do you want to get printed?
+
+Using the parameter `--log-lines 100`, `evsvalidator` will accumulate up to 
+100 lines and then it will exit.
