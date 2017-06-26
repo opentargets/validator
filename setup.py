@@ -28,4 +28,8 @@ setup(name=__pkgname__,
       classifiers=[
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7'
-      ])
+      ],
+      extras_require={
+          'tests': [
+              'nose'
+              ]})

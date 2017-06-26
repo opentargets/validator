@@ -4,6 +4,7 @@ python:
 sudo: required
 install:
   - pip install .
+script: nosetests
 deploy:
   provider: pypi
   user: "andreap"
