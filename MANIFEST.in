@@ -1,1 +1,1 @@
-include evsvalidator/resources/*.ini
+include opentargets_validator/resources/*.ini

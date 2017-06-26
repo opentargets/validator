@@ -1,15 +1,15 @@
-# evs-validator
+# opentargets-validator
 
 Evidence string validator.
 
 ## How to install it
 
 ```sh
-wget https://github.com/opentargets/evs-validator/archive/master.zip
+wget https://github.com/opentargets/validator/archive/master.zip
 unzip master.zip
-cd evs-validator-master
+cd validator-master
 python setup.py install
-evsvalidator -h
+opentargets_validator -h
 ```
 
 ## How to use it
@@ -21,7 +21,7 @@ You have two options
 ### Read from stdin
 
 ```sh
-cat file.json | evsvalidator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json
+cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json
 ```
 All log messages will be redirected to _stderr_.
 
@@ -36,10 +36,10 @@ Using this option you could use these uri formats
 - location/file.json
 
 ```sh
-evsvalidator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json https://where/myfile/is/located.json
+opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json https://where/myfile/is/located.json
 ```
 
 ### How many lines do you want to get printed?
 
-Using the parameter `--log-lines 100`, `evsvalidator` will accumulate up to 
+Using the parameter `--log-lines 100`, `opentargets_validator` will accumulate up to 
 100 lines and then it will exit.

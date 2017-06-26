@@ -3,7 +3,7 @@
 from setuptools import setup
 
 # importing __<vars>__ into the namespace
-with open('evsvalidator/version.py') as fv:
+with open('opentargets_validator/version.py') as fv:
     exec(fv.read())
 
 setup(name=__pkgname__,
@@ -12,7 +12,7 @@ setup(name=__pkgname__,
       author=__author__,
       author_email=__author_email__,
       url=__homepage__,
-      packages=['evsvalidator'],
+      packages=['opentargets_validator'],
       license=__license__,
       download_url=__homepage__ + '/archive/' + __version__ + '.tar.gz',
       keywords=['opentargets', 'bioinformatics', 'python2'],
@@ -21,7 +21,11 @@ setup(name=__pkgname__,
       dependency_links=[],
       include_package_data=True,
       entry_points={
-          'console_scripts': ['evsvalidator=evsvalidator.cli:main'],
+          'console_scripts': ['opentargets_validator=opentargets_validator.cli:main'],
       },
       data_files=[],
-      scripts=[])
+      scripts=[],
+      classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7'
+      ])

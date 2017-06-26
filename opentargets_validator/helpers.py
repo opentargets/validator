@@ -8,7 +8,7 @@ import os
 import gzip
 import zipfile
 from contextlib import contextmanager
-import evsvalidator
+import opentargets_validator
 
 _l = logging.getLogger(__name__)
 
@@ -130,7 +130,7 @@ def file_or_resource(fname=None):
     if fname is not None:
         filename = os.path.expanduser(fname)
     
-        resource_package = evsvalidator.__name__
+        resource_package = opentargets_validator.__name__
         resource_path = os.path.sep.join(('resources', filename))
 
         abs_filename = os.path.join(os.path.abspath(os.getcwd()), filename) \
