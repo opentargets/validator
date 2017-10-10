@@ -39,13 +39,13 @@ def main():
     if not args.schema:
         logger.error('A --schema <schemafile> has to be specified.')
         return 1
-    
+
     if args.data_source_file == '-':
         validate(sys.stdin,args.schema, args.loglines)
     else:
         with URLZSource(args.data_source_file, args.loglines).open() as fh:
-            validate(fh,args.schema)
-    
+            validate(fh, args.schema, args.loglines)
+
     return 0
 
 
