@@ -41,7 +41,7 @@ def main():
         return 1
 
     if args.data_source_file == '-':
-        validate(sys.stdin,args.schema, args.loglines)
+        validate(sys.stdin, args.schema, args.loglines)
     else:
         with URLZSource(args.data_source_file, args.loglines).open() as fh:
             validate(fh, args.schema, args.loglines)
