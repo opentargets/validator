@@ -95,7 +95,7 @@ def generate_validator_from_schema(schema_uri):
     uri_split = rfc3987.parse(schema_uri)
     if uri_split['scheme'] in ("http", "https"):
         #its a http or https use requests
-        schema = requests.get(schema_uri).json
+        schema = requests.get(schema_uri).json()
     elif uri_split['scheme'] == "file":
         #its a file, open as normal
         #reconstiture the file path from the uri
@@ -112,9 +112,12 @@ def generate_validator_from_schema(schema_uri):
     #Don't use from_schema because it uses the $id baked
     #into the schema, and we want to avoid baking
     handlers = dict(file=file_handler)
-    resolver = jss.RefResolver(schema_uri, schema, handlers=handlers, store={}, cache_remote=False)
+    resolver = jss.RefResolver(schema_uri, schema, handlers=handlers, 
+        store={})
 
-    validator = jss.Draft7Validator(schema=schema, resolver=resolver)
+    validator = jss.Draft7Validator(schema=schema, 
+        resolver=resolver,
+        )
 
     return validator
 
