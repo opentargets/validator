@@ -1,3 +1,5 @@
+#make sure this matches setup.py install_requires
+
 requests
 #pin to a version that starts to support schema 7
 jsonschema==3.0.0a3
