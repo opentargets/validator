@@ -2,6 +2,10 @@
 
 Evidence string validator.
 
+## Purpose
+
+This validator is intended to validate JSON files that have a single JSON object per line. This is the format that is required from evidence submitters. As such it is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors.
+
 ## How to install it
 
 ```sh
