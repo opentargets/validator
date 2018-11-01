@@ -1,6 +1,7 @@
 import time
 import logging
 import json
+import codecs
 from helpers import generate_validator_from_schema, LogAccum
 
 
@@ -13,6 +14,7 @@ def validate(file_descriptor, schema_uri, loglines):
 
     validator = generate_validator_from_schema(schema_uri)
 
+    #for line in codecs.EncodedFile(file_descriptor, "UTF-8"):
     for line in file_descriptor:
         try:
             parsed_line = json.loads(line)

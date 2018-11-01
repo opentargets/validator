@@ -1,2 +1,10 @@
+#make sure this matches setup.py install_requires
+
 requests
-jsonschema
+#pin to a version that starts to support schema 7
+jsonschema==3.0.0a3
+
+#require to validate uris
+rfc3987
+#required to validate date/time
+#strict-rfc3339

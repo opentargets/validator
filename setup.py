@@ -17,7 +17,8 @@ setup(name=__pkgname__,
       download_url=__homepage__ + '/archive/' + __version__ + '.tar.gz',
       keywords=['opentargets', 'bioinformatics', 'python2'],
       platforms=['any'],
-      install_requires=['requests','jsonschema'],
+      #make sure this matches requirements.txt
+      install_requires=['requests','jsonschema==3.0.0a3', 'rfc3987'],
       dependency_links=[],
       include_package_data=True,
       entry_points={
