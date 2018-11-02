@@ -4,7 +4,8 @@ python:
   - '3.6'
 sudo: required
 install:
-  - pip install .
+  - pip install -r requirements.txt
+  - pip install -e .
 script: 
   - pytest --cov=mrtarget --cov-report term tests/ --fulltrace
 deploy:
