@@ -5,10 +5,20 @@ python:
 sudo: required
 install:
   - pip install .
-script: nosetests
+script: 
+  - pytest --cov=mrtarget --cov-report term tests/ --fulltrace
 deploy:
   provider: pypi
   user: "${PYPI_USERNAME}"
   password: "${PYPI_PASSWORD}"
   on:
     tags: true
+
+notifications:
+  email:
+    recipients:
+    - ops@opentargets.org
+    on_success: never
+    on_failure: always
+after_success:
+  - codecov

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import unicode_literals
 from setuptools import setup
 
 # importing __<vars>__ into the namespace

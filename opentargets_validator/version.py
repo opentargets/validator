@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 __pkgname__ = 'opentargets-validator'
 __author__ = 'OpenTargets Core Team <support@targetvalidation.org>'
 __author_email__ = 'support@targetvalidation.org'

@@ -8,3 +8,7 @@ jsonschema==3.0.0a3
 rfc3987
 #required to validate date/time
 #strict-rfc3339
+
+#allows code coverage reporting
+pytest-cov
+codecov
