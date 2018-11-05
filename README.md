@@ -46,3 +46,19 @@ opentargets_validator --schema https://raw.githubusercontent.com/opentargets/jso
 
 Using the parameter `--log-lines 100`, `opentargets_validator` will accumulate up to
 100 lines and then it will exit.
+
+## How to develop it
+
+Within a [virtualenv](https://virtualenv.pypa.io/en/latest/) you can install with:
+
+```sh
+pip install -e .[dev]
+```
+
+and you can run the tests with:
+
+```sh
+pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
+```
+
+This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator)

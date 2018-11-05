@@ -13,8 +13,8 @@ rfc3987
 #strict-rfc3339
 
 #allows code coverage reporting
-pytest-cov
-codecov
+pytest-cov[dev]
+codecov[dev]
 
 #for python2 and 3 compatibility
 future
