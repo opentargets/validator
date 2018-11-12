@@ -1,8 +1,11 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import str
 import time
 import logging
 import json
 import codecs
-from helpers import generate_validator_from_schema, LogAccum
+from .helpers import generate_validator_from_schema, LogAccum
 
 
 def validate(file_descriptor, schema_uri, loglines):

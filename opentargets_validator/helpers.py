@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 import logging
 import tempfile as tmp
 import requests
@@ -131,7 +133,7 @@ class LogAccum(object):
     def _flush(self, force=False):
         flushed = False
         if force or self._accum['counter'] >= self._limit:
-            keys = set(self._accum.iterkeys()) - set(['counter'])
+            keys = set(self._accum.keys()) - set(['counter'])
 
             for k in keys:
                 for msg in self._accum[k]:

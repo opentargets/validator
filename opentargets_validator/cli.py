@@ -1,4 +1,5 @@
 from __future__ import print_function, absolute_import
+from __future__ import unicode_literals
 import argparse
 import logging
 import logging.config
@@ -33,7 +34,7 @@ def main():
             root_logger = logging.getLogger()
             root_logger.setLevel(logging.getLevelName(args.loglevel))
             logger.setLevel(logging.getLevelName(args.loglevel))
-        except Exception, e:
+        except Exception as e:
             root_logger.exception(e)
 
     if not args.schema:
