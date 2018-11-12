@@ -1,4 +1,7 @@
+[![PyPI version](https://badge.fury.io/py/opentargets-validator.svg)](https://badge.fury.io/py/opentargets-validator)
+
 [![Build Status](https://travis-ci.org/opentargets/validator.svg?branch=master)](https://travis-ci.org/opentargets/validator)
+
 [![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
 
 # opentargets-validator
@@ -61,4 +64,6 @@ and you can run the tests with:
 pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 ```
 
-This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator)
+This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator) .
+
+Releases are put on [PyPI](https://pypi.org/project/opentargets-validator).
