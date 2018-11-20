@@ -41,12 +41,18 @@ def main():
         logger.error('A --schema <schemafile> has to be specified.')
         return 1
 
+    valid = True
     if args.data_source_file == '-':
         validate(sys.stdin, args.schema, args.loglines)
     else:
         with URLZSource(args.data_source_file, args.loglines).open() as fh:
             validate(fh, args.schema, args.loglines)
 
+    #if we had any validation errors, exit with status 2
+    if not valid:
+        return 2
+
+    #if everything was fine, exit with status 0
     return 0
 
 
