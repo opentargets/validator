@@ -9,76 +9,69 @@ import json
 import os
 import gzip
 import zipfile
-import rfc3987 
+import rfc3987
+import functools
 from contextlib import contextmanager
 import opentargets_validator
 
 _l = logging.getLogger(__name__)
 
 
-@contextmanager
-def url_to_tmpfile(url, delete=True, *args, **kwargs):
-    '''request a url using requests pkg and pass *args and **kwargs to
-    requests.get function (useful for proxies) and returns the filled file
-    descriptor from a tempfile.NamedTemporaryFile
-    '''
-    f = None
-
-    if url.startswith('ftp://'):
-        raise NotImplementedError('finish ftp')
-
-    elif url.startswith('file://') or ('://' not in url):
-        filename = url[len('file://'):] if '://' in url else url
-        with open(filename, mode="r+b") as f:
-            yield f
-
-    else:
-        f = requests.get(url, *args, stream=True, **kwargs)
-        f.raise_for_status()
-
-        with tmp.NamedTemporaryFile(mode='wb', delete=delete) as fd:
-            # write data into file in streaming fashion
-            for block in f.iter_content(1024):
-                fd.write(block)
-
-            fd.seek(0)
-            yield fd
-
-        f.close()
-
-
 class URLZSource(object):
-    def __init__(self, *args, **kwargs):
-        '''A source extension for petl python package
+    def __init__(self, filename, *args, **kwargs):
+        """A source extension for petl python package
         Just in case you need to use proxies for url use it as normal
         named arguments
-        '''
+        """
+        self.filename = filename
         self.args = args
         self.kwargs = kwargs
         self.proxies = None
 
     @contextmanager
-    def open(self, mode='r'):
-        if not mode.startswith('r'):
-            raise IOError('source is read-only')
+    def _open_local(self, filename):
+        file_to_open = filename[len('file://'):] if '://' in filename else filename
+        open_f = None
 
-        zf = None
+        if file_to_open.endswith('.gz'):
+            open_f = functools.partial(gzip.open, mode='rb')
 
-        with url_to_tmpfile(*self.args, **self.kwargs) as f:
-            buf = f
+        elif file_to_open.endswith('.zip'):
+            zipped_data = zipfile.ZipFile(file_to_open)
+            info = zipped_data.getinfo(zipped_data.filelist[0].orig_filename)
 
-            if self.args[0].endswith('.gz'):
-                zf = gzip.GzipFile(fileobj=buf)
-            elif self.args[0].endswith('.zip'):
-                zipped_data = zipfile.ZipFile(buf)
-                info = zipped_data.getinfo(
-                    zipped_data.filelist[0].orig_filename)
-                zf = zipped_data.open(info)
-            else:
-                zf = buf
+            file_to_open = info
+            open_f = functools.partial(zipped_data.open)
+        else:
+            open_f = functools.partial(open, mode='r')
 
-            yield zf
-        zf.close()
+        with open_f(file_to_open) as fd:
+            yield fd
+
+    @contextmanager
+    def open(self):
+        if self.filename.startswith('ftp://'):
+            raise NotImplementedError('finish ftp')
+
+        elif self.filename.startswith('file://') or ('://' not in self.filename):
+            file_to_open = self.filename[len('file://'):] if '://' in self.filename else self.filename
+            with self._open_local(file_to_open) as fd:
+                yield fd
+
+        else:
+            local_filename = self.filename.split('://')[-1].split('/')[-1]
+            f = requests.get(self.filename, *self.args, stream=True, **self.kwargs)
+            f.raise_for_status()
+            file_to_open = None
+            with tmp.NamedTemporaryFile(mode='rwb', suffix=local_filename, delete=False) as fd:
+                # write data into file in streaming fashion
+                file_to_open = fd.name
+                for block in f.iter_content(1024):
+                    fd.write(block)
+
+            with self._open_local(file_to_open) as fd:
+                yield fd
+
 
 def file_handler(uri):
     #handle file:// uris because of https://github.com/Julian/jsonschema/issues/478
@@ -88,6 +81,7 @@ def file_handler(uri):
     with open(os.path.abspath(os.path.join(uri_split['authority'], uri_split['path'])), 'r') as schema_file:
         schema = json.load(schema_file)
     return schema
+
 
 def generate_validator_from_schema(schema_uri):
 
