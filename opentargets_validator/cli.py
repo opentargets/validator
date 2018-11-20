@@ -43,10 +43,10 @@ def main():
 
     valid = True
     if args.data_source_file == '-':
-        validate(sys.stdin, args.schema, args.loglines)
+        valid = validate(sys.stdin, args.schema, args.loglines)
     else:
-        with URLZSource(args.data_source_file, args.loglines).open() as fh:
-            validate(fh, args.schema, args.loglines)
+        with URLZSource(args.data_source_file).open() as fh:
+            valid = validate(fh, args.schema, args.loglines)
 
     #if we had any validation errors, exit with status 2
     if not valid:
