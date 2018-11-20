@@ -63,7 +63,7 @@ class URLZSource(object):
             f = requests.get(self.filename, *self.args, stream=True, **self.kwargs)
             f.raise_for_status()
             file_to_open = None
-            with tmp.NamedTemporaryFile(mode='rwb', suffix=local_filename, delete=False) as fd:
+            with tmp.NamedTemporaryFile(mode='wb', suffix=local_filename, delete=False) as fd:
                 # write data into file in streaming fashion
                 file_to_open = fd.name
                 for block in f.iter_content(1024):
