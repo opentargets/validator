@@ -1,8 +1,6 @@
 #make sure this matches setup.py install_requires
 
 
-
-
 requests
 #pin to a version that starts to support schema 7
 jsonschema==3.0.0a3
@@ -13,8 +11,8 @@ rfc3987
 #strict-rfc3339
 
 #allows code coverage reporting
-pytest-cov[dev]
-codecov[dev]
+pytest-cov
+codecov
 
 #for python2 and 3 compatibility
 future
