@@ -15,7 +15,7 @@ def validate(file_descriptor, schema_uri, loglines):
     l = LogAccum(logger,error_lines if error_lines < 1024 else 1024)
     line_counter = 1
     parsed_line = None
-    errors_found = False
+    valid = True
 
     validator = generate_validator_from_schema(schema_uri)
 
@@ -31,7 +31,7 @@ def validate(file_descriptor, schema_uri, loglines):
         t2 = time.time()
 
         if validation_errors:
-            errors_found = True
+            valid = False
             # here I have to log all fails to logger and elastic
             error_messages = ' '.join(validation_errors).replace('\n', ' ; ').replace('\r', '')
 
@@ -47,13 +47,9 @@ def validate(file_descriptor, schema_uri, loglines):
 
             error_lines -= 1
             if error_lines <= 0:
-                l.flush(True)
-                logger.warning('too many errors parsing the file, so exiting')
-                exit(2)
+                break #end the for loop early
 
         line_counter += 1
 
     l.flush(True)
-    
-    if errors_found:
-        exit(2)
+    return valid
