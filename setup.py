@@ -2,15 +2,28 @@
 
 from __future__ import unicode_literals
 from setuptools import setup
+import io
+import os
 
+
+pkg_dir = os.path.dirname(__file__)
 # importing __<vars>__ into the namespace
 #https://packaging.python.org/guides/single-sourcing-package-version/#single-sourcing-the-version
-with open('opentargets_validator/version.py') as fv:
+with open(os.path.join(pkg_dir, 'opentargets_validator', 'version.py')) as fv:
     exec(fv.read())
+
+
+long_description = ""
+readme_path = os.path.join(pkg_dir, 'README.md')
+with io.open(readme_path, encoding='utf-8') as readme_file:
+    long_description = readme_file.read()
+
 
 setup(name=__pkgname__,
     version=__version__,
     description=__description__,
+    long_description=long_description,
+    long_description_content_type='text/markdown; charset=UTF-8',
     author=__author__,
     author_email=__author_email__,
     url=__homepage__,
