@@ -12,7 +12,11 @@ Evidence string validator.
 
 ## Purpose
 
-This validator is intended to validate JSON files that have a single JSON object per line. This is the format that is required from evidence submitters. As such it is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors.
+This tool is intended to validate JSON files that have a single JSON object per line. This is the format that is required from the [data sources](https://docs.targetvalidation.org/data-sources/data-sources) that provide us with evidence for our target-disease associations. 
+
+The validator will check the expected structure, look for missing objects, flag disease IDs that do not start as EFO and Orphanet ID, among other assessments.
+
+Be aware that this is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors. 
 
 ## How to install it
 
