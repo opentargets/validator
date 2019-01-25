@@ -20,7 +20,7 @@ Be aware that this is *not* a general-purpose JSON validator, and use of "pretty
 
 ### Schema URLs
 
-The OpenTargets JSON schema is located at https://github.com/opentargets/json_schema/blob/master/opentargets.json . When specifying this schema to the validator, you should use the :raw" GitHub URL, e.g. 
+The OpenTargets JSON schema is located at https://github.com/opentargets/json_schema/blob/master/opentargets.json . When specifying this schema to the validator, you should use the "raw" GitHub URL, e.g. 
 
 `https://raw.githubusercontent.com/opentargets/json_schema/1.5.0/opentargets.json`
 
