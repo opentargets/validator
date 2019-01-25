@@ -18,6 +18,14 @@ The validator will check the expected structure, look for missing objects, flag 
 
 Be aware that this is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors. 
 
+### Schema URLs
+
+The OpenTargets JSON schema is located at https://github.com/opentargets/json_schema/blob/master/opentargets.json . When specifying this schema to the validator, you should use the :raw" GitHub URL, e.g. 
+
+`https://raw.githubusercontent.com/opentargets/json_schema/1.5.0/opentargets.json`
+
+Also to make sure that the version tag (1.5.0 in the example above) corresponds with the version you wish to use; for example you may want to use `master` to get the absolute latest version.
+
 ## How to install it
 
 ```sh
@@ -33,7 +41,7 @@ You have two options
 ### Read from stdin
 
 ```sh
-cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json
+cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/1.5.0/opentargets.json
 ```
 All log messages will be redirected to _stderr_.
 
@@ -48,7 +56,7 @@ Using this option you could use these uri formats
 - location/file.json
 
 ```sh
-opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/master/src/literature_curated.json https://where/myfile/is/located.json
+opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/1.5.0/opentargets.json https://where/myfile/is/located.json
 ```
 
 ### How many lines do you want to get printed?
