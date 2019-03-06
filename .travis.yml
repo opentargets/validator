@@ -9,6 +9,7 @@ script:
   - pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 deploy:
   provider: pypi
+  skip_existing: true
   user: "${PYPI_USERNAME}"
   password: "${PYPI_PASSWORD}"
   on:
