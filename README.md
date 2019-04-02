@@ -39,7 +39,9 @@ All log messages will be redirected to _stderr_.
 
 ### Read from positional argument
 
-Filename extensions could be `.[json|json.zip|json.zip]`
+Filename extensions could be:
+ - `.json`
+ - `.json.gz`
 
 Using this option you could use these uri formats
 - http[s]://file/location/name.json
