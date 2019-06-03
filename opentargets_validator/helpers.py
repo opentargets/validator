@@ -17,62 +17,6 @@ import opentargets_validator
 _l = logging.getLogger(__name__)
 
 
-class URLZSource(object):
-    def __init__(self, filename, *args, **kwargs):
-        """A source extension for petl python package
-        Just in case you need to use proxies for url use it as normal
-        named arguments
-        """
-        self.filename = filename
-        self.args = args
-        self.kwargs = kwargs
-        self.proxies = None
-
-    @contextmanager
-    def _open_local(self, filename):
-        file_to_open = filename[len('file://'):] if '://' in filename else filename
-        open_f = None
-
-        if file_to_open.endswith('.gz'):
-            open_f = functools.partial(gzip.open, mode='rb')
-
-        elif file_to_open.endswith('.zip'):
-            zipped_data = zipfile.ZipFile(file_to_open)
-            info = zipped_data.getinfo(zipped_data.filelist[0].orig_filename)
-
-            file_to_open = info
-            open_f = functools.partial(zipped_data.open)
-        else:
-            open_f = functools.partial(open, mode='r')
-
-        with open_f(file_to_open) as fd:
-            yield fd
-
-    @contextmanager
-    def open(self):
-        if self.filename.startswith('ftp://'):
-            raise NotImplementedError('finish ftp')
-
-        elif self.filename.startswith('file://') or ('://' not in self.filename):
-            file_to_open = self.filename[len('file://'):] if '://' in self.filename else self.filename
-            with self._open_local(file_to_open) as fd:
-                yield fd
-
-        else:
-            local_filename = self.filename.split('://')[-1].split('/')[-1]
-            f = requests.get(self.filename, *self.args, stream=True, **self.kwargs)
-            f.raise_for_status()
-            file_to_open = None
-            with tmp.NamedTemporaryFile(mode='wb', suffix=local_filename, delete=False) as fd:
-                # write data into file in streaming fashion
-                file_to_open = fd.name
-                for block in f.iter_content(1024):
-                    fd.write(block)
-
-            with self._open_local(file_to_open) as fd:
-                yield fd
-
-
 def file_handler(uri):
     #handle file:// uris because of https://github.com/Julian/jsonschema/issues/478
 
