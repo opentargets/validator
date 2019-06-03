@@ -33,7 +33,7 @@ setup(name=__pkgname__,
     keywords=['opentargets', 'bioinformatics', 'python2'],
     platforms=['any'],
     #make sure this matches requirements.txt
-    install_requires=['requests','jsonschema==3.0.0a3', 'rfc3987', 'future', 'opentargets-urlzsource'],
+    install_requires=['requests','jsonschema==3.0.0a3', 'rfc3987', 'future', 'simplejson', 'opentargets-urlzsource'],
     dependency_links=[],
     include_package_data=True,
     entry_points={'console_scripts': ['opentargets_validator=opentargets_validator.cli:main'],},

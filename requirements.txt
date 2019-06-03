@@ -17,4 +17,7 @@ codecov
 #for python2 and 3 compatibility
 future
 
+#improve performance
+simplejson
+
 opentargets-urlzsource
