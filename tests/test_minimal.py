@@ -1,8 +1,8 @@
 import unittest
 import os
-from opentargets_validator.helpers import file_or_resource, URLZSource
+from opentargets_validator.helpers import file_or_resource
 from opentargets_validator.validator import validate
-
+from opentargets_urlzsource import URLZSource
 
 class MinimalTests(unittest.TestCase):
 

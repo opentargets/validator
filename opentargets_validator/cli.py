@@ -5,8 +5,9 @@ import logging
 import logging.config
 import sys
 
-from opentargets_validator.helpers import file_or_resource, URLZSource
+from opentargets_validator.helpers import file_or_resource
 from opentargets_validator.validator import validate
+from opentargets_urlzsource import URLZSource
 
 
 def main():
