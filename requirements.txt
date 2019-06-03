@@ -16,3 +16,5 @@ codecov
 
 #for python2 and 3 compatibility
 future
+
+opentargets-urlzsource
