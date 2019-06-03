@@ -19,5 +19,6 @@ future
 
 #improve performance
 simplejson
+pypeln
 
 opentargets-urlzsource

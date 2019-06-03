@@ -1,17 +1,12 @@
 from __future__ import unicode_literals
 from builtins import object
 import logging
-import tempfile as tmp
 import requests
 import jsonschema as jss
 import pkg_resources as res
-import json
+import simplejson as json
 import os
-import gzip
-import zipfile
 import rfc3987
-import functools
-from contextlib import contextmanager
 import opentargets_validator
 from collections import OrderedDict
 import hashlib
