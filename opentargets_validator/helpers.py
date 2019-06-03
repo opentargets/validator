@@ -14,8 +14,6 @@ import functools
 from contextlib import contextmanager
 import opentargets_validator
 
-_l = logging.getLogger(__name__)
-
 
 def file_handler(uri):
     #handle file:// uris because of https://github.com/Julian/jsonschema/issues/478
@@ -60,43 +58,6 @@ def generate_validator_from_schema(schema_uri):
         )
 
     return validator
-
-
-class LogAccum(object):
-    def __init__(self, logger_o, elem_limit=1024):
-        self._logger = logger_o
-        self._accum = {'counter': 0}
-        self._limit = elem_limit
-
-    def _flush(self, force=False):
-        flushed = False
-        if force or self._accum['counter'] >= self._limit:
-            keys = set(self._accum.keys()) - set(['counter'])
-
-            for k in keys:
-                for msg in self._accum[k]:
-                    self._logger.log(k, msg[0], *msg[1])
-            # reset the accum
-            self._accum = {'counter': 0}
-            flushed = True
-        
-        return flushed
-
-    def flush(self, force=True):
-        return self._flush(force)
-
-    def log(self, level, message, *args):
-        if level in self._accum:
-            self._accum[level].append((message, args))
-        else:
-            self._accum[level] = [(message, args)]
-
-        self._accum['counter'] += 1
-        self._flush()
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.flush(True)
-
 
 def file_or_resource(fname=None):
     '''get filename and check if in getcwd then get from
