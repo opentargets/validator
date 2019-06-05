@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 from builtins import str
 import logging
 import simplejson as json
-import os
+import multiprocessing
 import hashlib
-from .helpers import generate_validator_from_schema,DataStructureFlattener
+from .helpers import generate_validator_from_schema
 import pypeln
 import functools
 
@@ -39,9 +39,11 @@ def validate(file_descriptor, schema_uri, loglines):
     line_counter = 1
     hash_lines = dict()
 
+    cpus = multiprocessing.cpu_count()
+
     stage = pypeln.process.map(validator_mapped, enumerate(file_descriptor),
         on_start=functools.partial(validate_start, schema_uri),
-        workers=len(os.sched_getaffinity(0)),
+        workers=cpus,
         maxsize=1000)
 
     for line_counter, validation_errors, hash_line in stage:
