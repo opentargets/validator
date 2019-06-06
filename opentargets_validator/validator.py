@@ -33,13 +33,12 @@ def validator_mapped(data, validator, logger):
 
 def validate(file_descriptor, schema_uri, do_hash):
     logger = logging.getLogger(__name__)
-    line_counter = 1
     hash_lines = dict()
     input_valid = True
 
     cpus = multiprocessing.cpu_count()
 
-    stage = pypeln.process.map(validator_mapped, enumerate(file_descriptor),
+    stage = pypeln.process.map(validator_mapped, enumerate(file_descriptor, start=1),
         on_start=functools.partial(validate_start, schema_uri),
         workers=cpus,
         maxsize=1000)

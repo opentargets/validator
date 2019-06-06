@@ -14,4 +14,5 @@ class MinimalTests(unittest.TestCase):
         schema_uri = "file://"+schema_source_file
 
         with URLZSource(data_source_file).open() as data_file_handle:
-            validate(data_file_handle, schema_uri, True)
+            valid = validate(data_file_handle, schema_uri, True)
+            self.assertTrue(valid)
