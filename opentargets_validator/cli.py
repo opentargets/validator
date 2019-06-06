@@ -5,8 +5,8 @@ import logging
 import logging.config
 import sys
 
-from opentargets_validator.helpers import file_or_resource
-from opentargets_validator.validator import validate
+from .helpers import file_or_resource
+from .validator import validate
 from opentargets_urlzsource import URLZSource
 
 
@@ -25,8 +25,11 @@ def main():
                         help="set the log level def: WARNING",
                         action='store', default='WARNING')
     parser.add_argument("--log-lines", dest='loglines',
-                        help="number of log errors to print out def: 2000",
-                        action='store', type=int, default=2000)
+                        help="number of log errors to print out [no longer supported]",
+                        action='store', type=int, default = None)
+    parser.add_argument("--hash", dest='hash',
+                        help="calculate hash of each line for uniqueness",
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -38,16 +41,23 @@ def main():
         except Exception as e:
             root_logger.exception(e)
 
+    #TODO use a position argument
     if not args.schema:
         logger.error('A --schema <schemafile> has to be specified.')
         return 1
 
+    # warn and exit when using removed arguments
+    if args.loglines is not None:
+        logger.error("--log-lines is no longer supported")
+        return 3
+
+
     valid = True
     if args.data_source_file == '-':
-        valid = validate(sys.stdin, args.schema, args.loglines)
+        valid = validate(sys.stdin, args.schema, args.hash)
     else:
         with URLZSource(args.data_source_file).open() as fh:
-            valid = validate(fh, args.schema, args.loglines)
+            valid = validate(fh, args.schema, args.hash)
 
     #if we had any validation errors, exit with status 2
     if not valid:
