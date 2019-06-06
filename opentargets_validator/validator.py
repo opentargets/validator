@@ -26,18 +26,16 @@ def validator_mapped(data, validator, logger):
 
     validation_errors = [(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)]
 
-#    hash_line = DataStructureFlattener(parsed_line["unique_association_fields"]).get_hexdigest()
-
     hash_line = hashlib.md5(json.dumps(parsed_line["unique_association_fields"], 
         sort_keys=True).encode("utf-8")).hexdigest()
 
     return line_counter, validation_errors, hash_line
 
-def validate(file_descriptor, schema_uri, loglines):
+def validate(file_descriptor, schema_uri, do_hash):
     logger = logging.getLogger(__name__)
-    error_lines = abs(loglines)
     line_counter = 1
     hash_lines = dict()
+    input_valid = True
 
     cpus = multiprocessing.cpu_count()
 
@@ -47,31 +45,32 @@ def validate(file_descriptor, schema_uri, loglines):
         maxsize=1000)
 
     for line_counter, validation_errors, hash_line in stage:
-        valid = True
+        line_valid = True
 
         if validation_errors:
-            valid = False
+            line_valid = False
+            input_valid = False
             for path, message in validation_errors:
                 logger.error('fail @ %i.%s %s', line_counter, path, message)
 
 
         #check for any hash collisions
         #only check those that have passed validation so far
-        if valid:
+        if do_hash and line_valid:
             if hash_line in hash_lines:
-                valid = False
+                #duplicate hash, fail this line
+                line_valid = False
+                input_valid = False
+
+                # order the lies so log is sensible
+                # might not be ordered due to pypeln multiprocessing
+                line_min = min(line_counter, hash_lines[hash_line])
+                line_max = max(line_counter, hash_lines[hash_line])
                 logger.error("Duplicate hashes %d and %d ",
-                    hash_lines[hash_line], line_counter)
+                    line_min, line_max)
             else:
                 hash_lines[hash_line] = line_counter
 
-        if not valid:
-            #if this line had any problems, decrement the number of allowed errors
-            error_lines -= 1
-            if error_lines <= 0:
-                #if there are too many errors, exit now
-                return False
-
         line_counter += 1
 
-    return valid
+    return input_valid
