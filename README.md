@@ -14,37 +14,39 @@ Evidence string validator.
 
 This tool is intended to validate JSON files that have a single JSON object per line. This is the format that is required from the [data sources](https://docs.targetvalidation.org/data-sources/data-sources) that provide us with evidence for our target-disease associations. 
 
-The validator will check the expected structure, look for missing objects, flag disease IDs that do not start as EFO and Orphanet ID, among other assessments.
+The validator will check the expected structure, defined in a JSON schema which must be provided via a `--schema` argument. 
 
 Be aware that this is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors. 
 
 ## How to install it
 
+The easiest way is with pip:
+
 ```sh
-pip install opentargets-validator
+pip install -U opentargets-validator
 ```
+
+It supports both Python 2 and Python 3.
 
 ## How to use it
 
-You have two options
-- read from a stdin file (_piped_ one)
-- pass as a positional argument and use a zipped or gzipped file (optional)
+You have two options:
+- pass a filename or URL as a positional argument
+- read from stdin (e.g. a shell pipe)
 
 ### Read from stdin
 
 ```sh
 cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/1.6.0/opentargets.json
 ```
-All log messages will be redirected to _stderr_.
 
 ### Read from positional argument
 
-Filename extensions could be:
- - `.json`
- - `.json.gz`
+This can automatically decompress gzip'ed files. Compression will be detected via filename e.g. ending with `.json.gz`.
 
-Using this option you could use these uri formats
-- http[s]://file/location/name.json
+Examples of acceptable paths are:
+- https://file/location/name.json
+- https://file/location/name.json.gz
 - file://relative/local/file.json
 - file:///absolute/file.json
 - location/file.json
@@ -53,12 +55,13 @@ Using this option you could use these uri formats
 opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/1.6.0/opentargets.json https://where/myfile/is/located.json
 ```
 
-### How many lines do you want to get printed?
+## Note
 
-Using the parameter `--log-lines 100`, `opentargets_validator` will accumulate up to
-100 lines and then it will exit.
+There used to be a `--log-lines` argument that could be used to exit early when a certain number of errors occored. This is no longer supported, and with parallelization improvements it is rarely necessary in practice.
 
-## How to develop it
+Evidence lines are checked for uniqueness by calculating the hash of the `unique_association_fields` field. This can be done in the validator using the `--hash` argument.
+
+## How to develop 
 
 Within a [virtualenv](https://virtualenv.pypa.io/en/latest/) you can install with:
 
@@ -74,4 +77,4 @@ pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 
 This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator) .
 
-Releases are put on [PyPI](https://pypi.org/project/opentargets-validator).
+Releases are put on [PyPI](https://pypi.org/project/opentargets-validator) automatically via Travis from GitHub tags.
