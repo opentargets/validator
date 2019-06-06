@@ -38,4 +38,9 @@ def validate(file_descriptor, schema_uri, loglines):
 
         line_counter += 1
 
+    #check if we had no lines, if so something went wrong and needs to be flagged
+    if line_counter == 0:
+        logger.error("No lines in input - does it exist?")
+        valid = False
+
     return valid
