@@ -18,6 +18,11 @@ The validator will check the expected structure, defined in a JSON schema which 
 
 Be aware that this is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors. 
 
+## Schema URLs
+The Open Targets JSON schema is located at https://github.com/opentargets/json_schema. Note that you should *not* use `master` as this may change any time, instead use the latest available tag, e.g. `1.6.3`. If you are a data provider, you will always receive an email from Open Targets with information about what JSON schema version to use. Also, when specifying the schema to the validator you have to use the "raw" GitHub URL:
+
+`https://raw.githubusercontent.com/opentargets/json_schema/1.6.3/opentargets.json`
+
 ## How to install it
 
 The easiest way is with pip:
@@ -37,7 +42,7 @@ You have two options:
 ### Read from stdin
 
 ```sh
-cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/1.6.0/opentargets.json
+cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/opentargets.json
 ```
 
 ### Read from positional argument
@@ -52,7 +57,7 @@ Examples of acceptable paths are:
 - location/file.json
 
 ```sh
-opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/1.6.0/opentargets.json https://where/myfile/is/located.json
+opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/opentargets.json https://where/myfile/is/located.json
 ```
 
 ## Note
