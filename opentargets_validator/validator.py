@@ -22,7 +22,7 @@ def validator_mapped(data, validator, logger):
         parsed_line = json.loads(line)
     except Exception as e:
         logger.error('failed parsing line %i: %s', line_counter, e)
-        return line_counter, None, None
+        return 0, None, None
 
     validation_errors = [(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)]
 
