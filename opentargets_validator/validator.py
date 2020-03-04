@@ -73,9 +73,9 @@ def validate(file_descriptor, schema_uri, do_hash):
                 hash_lines[hash_line] = line_counter
 
 
-    #check if we had no lines, if so something went wrong and needs to be flagged
-    if not is_file_fine or line_counter == 0:
-        logger.error("No lines in input - does it exist?")
+    # If there were issues with input file, e.g. because it was empty, flag it
+    if not is_file_fine:
+        logger.error("Issue with input file, probably because it was empty")
         input_valid = False
 
     return input_valid
