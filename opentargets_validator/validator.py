@@ -17,7 +17,6 @@ def validate_start(schema_uri):
 
 def validator_mapped(data, validator, logger):
     line_counter, line = data
-    
     try:
         parsed_line = json.loads(line)
     except Exception as e:
@@ -38,12 +37,15 @@ def validate(file_descriptor, schema_uri, do_hash):
 
     cpus = multiprocessing.cpu_count()
 
+    # Avoid problems due to pypeln behaving unexpectedly because of problematic input file, e.g. empty input file that crashes the enumerate call
+    is_file_fine=False
     stage = pypeln.process.map(validator_mapped, enumerate(file_descriptor, start=1),
         on_start=functools.partial(validate_start, schema_uri),
         workers=cpus,
         maxsize=1000)
 
     for line_counter, validation_errors, hash_line in stage:
+        is_file_fine=True
         line_valid = True
 
         if validation_errors:
@@ -73,7 +75,7 @@ def validate(file_descriptor, schema_uri, do_hash):
         line_counter += 1
 
     #check if we had no lines, if so something went wrong and needs to be flagged
-    if line_counter == 0:
+    if not is_file_fine or line_counter == 0:
         logger.error("No lines in input - does it exist?")
         input_valid = False
 
