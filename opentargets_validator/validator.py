@@ -72,7 +72,6 @@ def validate(file_descriptor, schema_uri, do_hash):
             else:
                 hash_lines[hash_line] = line_counter
 
-        line_counter += 1
 
     #check if we had no lines, if so something went wrong and needs to be flagged
     if not is_file_fine or line_counter == 0:
