@@ -20,8 +20,8 @@ def validator_mapped(data, validator, logger):
     try:
         parsed_line = json.loads(line)
     except Exception as e:
-        logger.error('failed parsing line %i: %s', line_counter, e)
-        return 0, None, None
+        logger.error('failed parsing line %i: %s %s', line_counter, line, e)
+        return line_counter, None, None
 
     validation_errors = [(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)]
 
@@ -72,11 +72,10 @@ def validate(file_descriptor, schema_uri, do_hash):
             else:
                 hash_lines[hash_line] = line_counter
 
-        line_counter += 1
 
-    #check if we had no lines, if so something went wrong and needs to be flagged
-    if not is_file_fine or line_counter == 0:
-        logger.error("No lines in input - does it exist?")
+    # If there were issues with input file, e.g. because it was empty, flag it
+    if not is_file_fine:
+        logger.error("Issue with input file, probably because it was empty")
         input_valid = False
 
     return input_valid
