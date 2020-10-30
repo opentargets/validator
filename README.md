@@ -6,6 +6,8 @@
 
 [![Docker Repository on Quay.io](https://quay.io/repository/opentargets/validator/status "Docker Repository on Quay.io")](https://quay.io/repository/opentargets/validator)
 
+[![Anaconda-Server Badge](https://anaconda.org/bioconda/opentargets-validator/badges/version.svg)](https://anaconda.org/bioconda/opentargets-validator)
+
 # opentargets-validator
 
 Evidence string validator.
@@ -32,6 +34,12 @@ pip install -U opentargets-validator
 ```
 
 It supports both Python 2 and Python 3.
+
+You can also use Conda:
+
+```sh
+conda install -c bioconda opentargets-validator
+```
 
 ## How to use it
 
