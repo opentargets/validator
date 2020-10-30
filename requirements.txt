@@ -3,7 +3,7 @@
 
 requests
 #pin to a version that starts to support schema 7
-jsonschema==3.0.0a3
+jsonschema>=3.0.2
 
 #require to validate uris
 rfc3987
