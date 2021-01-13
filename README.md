@@ -72,8 +72,6 @@ opentargets_validator --schema https://raw.githubusercontent.com/opentargets/jso
 
 There used to be a `--log-lines` argument that could be used to exit early when a certain number of errors occored. This is no longer supported, and with parallelization improvements it is rarely necessary in practice.
 
-Evidence lines are checked for uniqueness by calculating the hash of the `unique_association_fields` field. This can be done in the validator using the `--hash` argument.
-
 ## How to develop 
 
 Within a [virtualenv](https://virtualenv.pypa.io/en/latest/) you can install with:

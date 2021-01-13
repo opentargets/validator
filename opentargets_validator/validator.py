@@ -4,7 +4,6 @@ from builtins import str
 import logging
 import simplejson as json
 import multiprocessing
-import hashlib
 from .helpers import generate_validator_from_schema
 import pypeln
 import functools
@@ -25,14 +24,10 @@ def validator_mapped(data, validator, logger):
 
     validation_errors = [(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)]
 
-    hash_line = hashlib.md5(json.dumps(parsed_line["unique_association_fields"], 
-        sort_keys=True).encode("utf-8")).hexdigest()
+    return line_counter, validation_errors
 
-    return line_counter, validation_errors, hash_line
-
-def validate(file_descriptor, schema_uri, do_hash):
+def validate(file_descriptor, schema_uri):
     logger = logging.getLogger(__name__)
-    hash_lines = dict()
     input_valid = True
 
     cpus = multiprocessing.cpu_count()
@@ -44,7 +39,7 @@ def validate(file_descriptor, schema_uri, do_hash):
         workers=cpus,
         maxsize=1000)
 
-    for line_counter, validation_errors, hash_line in stage:
+    for line_counter, validation_errors in stage:
         is_file_fine=True
         line_valid = True
 
@@ -53,24 +48,6 @@ def validate(file_descriptor, schema_uri, do_hash):
             input_valid = False
             for path, message in validation_errors:
                 logger.error('fail @ %i.%s %s', line_counter, path, message)
-
-
-        #check for any hash collisions
-        #only check those that have passed validation so far
-        if do_hash and line_valid:
-            if hash_line in hash_lines:
-                #duplicate hash, fail this line
-                line_valid = False
-                input_valid = False
-
-                # order the lies so log is sensible
-                # might not be ordered due to pypeln multiprocessing
-                line_min = min(line_counter, hash_lines[hash_line])
-                line_max = max(line_counter, hash_lines[hash_line])
-                logger.error("Duplicate hashes %d and %d ",
-                    line_min, line_max)
-            else:
-                hash_lines[hash_line] = line_counter
 
 
     # If there were issues with input file, e.g. because it was empty, flag it

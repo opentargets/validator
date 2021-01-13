@@ -27,9 +27,6 @@ def main():
     parser.add_argument("--log-lines", dest='loglines',
                         help="number of log errors to print out [no longer supported]",
                         action='store', type=int, default = None)
-    parser.add_argument("--hash", dest='hash',
-                        help="calculate hash of each line for uniqueness",
-                        action='store_true')
 
     args = parser.parse_args()
 
@@ -54,10 +51,10 @@ def main():
 
     valid = True
     if args.data_source_file == '-':
-        valid = validate(sys.stdin, args.schema, args.hash)
+        valid = validate(sys.stdin, args.schema)
     else:
         with URLZSource(args.data_source_file).open() as fh:
-            valid = validate(fh, args.schema, args.hash)
+            valid = validate(fh, args.schema)
 
     #if we had any validation errors, exit with status 2
     if not valid:
