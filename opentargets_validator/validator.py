@@ -1,18 +1,18 @@
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from builtins import str
-import logging
-import simplejson as json
-import multiprocessing
-from .helpers import generate_validator_from_schema
-import pypeln
 import functools
+import logging
+import multiprocessing
+
+import pypeln
+import simplejson as json
+
+from .helpers import generate_validator_from_schema
 
 
 def validate_start(schema_uri):
     validator = generate_validator_from_schema(schema_uri)
     logger = logging.getLogger(__name__)
     return validator, logger
+
 
 def validator_mapped(data, validator, logger):
     line_counter, line = data
@@ -25,6 +25,7 @@ def validator_mapped(data, validator, logger):
     validation_errors = [(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)]
 
     return line_counter, validation_errors
+
 
 def validate(file_descriptor, schema_uri):
     logger = logging.getLogger(__name__)

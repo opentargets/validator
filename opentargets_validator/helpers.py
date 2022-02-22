@@ -1,15 +1,12 @@
-from __future__ import unicode_literals
-from builtins import object
-import logging
-import requests
+import os
+
 import jsonschema as jss
 import pkg_resources as res
-import simplejson as json
-import os
+import requests
 import rfc3987
+import simplejson as json
+
 import opentargets_validator
-from collections import OrderedDict
-import hashlib
 
 
 def file_handler(uri):
@@ -38,7 +35,7 @@ def generate_validator_from_schema(schema_uri):
             schema = json.load(schema_file)
     else:
         raise ValueError("schema uri must have file or url scheme")
-    
+
 
     #Create a refresolver to allow resolution
     #of relative schema links
@@ -47,14 +44,15 @@ def generate_validator_from_schema(schema_uri):
     #Don't use from_schema because it uses the $id baked
     #into the schema, and we want to avoid baking
     handlers = dict(file=file_handler)
-    resolver = jss.RefResolver(schema_uri, schema, handlers=handlers, 
+    resolver = jss.RefResolver(schema_uri, schema, handlers=handlers,
         store={})
 
-    validator = jss.Draft7Validator(schema=schema, 
+    validator = jss.Draft7Validator(schema=schema,
         resolver=resolver,
         )
 
     return validator
+
 
 def file_or_resource(fname=None):
     '''get filename and check if in getcwd then get from
@@ -62,7 +60,7 @@ def file_or_resource(fname=None):
     '''
     if fname is not None:
         filename = os.path.expanduser(fname)
-    
+
         resource_package = opentargets_validator.__name__
         resource_path = os.path.sep.join(('resources', filename))
 

@@ -1,13 +1,12 @@
-from __future__ import print_function, absolute_import
-from __future__ import unicode_literals
 import argparse
 import logging
 import logging.config
 import sys
 
+from opentargets_urlzsource import URLZSource
+
 from .helpers import file_or_resource
 from .validator import validate
-from opentargets_urlzsource import URLZSource
 
 
 def main():
@@ -47,7 +46,6 @@ def main():
     if args.loglines is not None:
         logger.error("--log-lines is no longer supported")
         return 3
-
 
     valid = True
     if args.data_source_file == '-':
