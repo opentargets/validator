@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.7-slim
 LABEL maintainer="data@opentargets.org"
 
 #need make gcc etc for requirements later
