@@ -4,7 +4,7 @@ orbs:
 jobs:
   build_test:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
@@ -14,7 +14,7 @@ jobs:
             pytest
   pypi_publish:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
