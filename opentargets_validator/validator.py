@@ -11,7 +11,7 @@ from .helpers import generate_validator_from_schema
 def validate_start(schema_uri):
     validator = generate_validator_from_schema(schema_uri)
     logger = logging.getLogger(__name__)
-    return validator, logger
+    return dict(validator=validator, logger=logger)
 
 
 def validator_mapped(data, validator, logger):
@@ -34,14 +34,18 @@ def validate(file_descriptor, schema_uri):
     cpus = multiprocessing.cpu_count()
 
     # Avoid problems due to pypeln behaving unexpectedly because of problematic input file, e.g. empty input file that crashes the enumerate call
-    is_file_fine=False
-    stage = pypeln.process.map(validator_mapped, enumerate(file_descriptor, start=1),
+    is_file_fine = False
+    stage = pypeln.process.map(
+        validator_mapped,
+        enumerate(file_descriptor, start=1),
         on_start=functools.partial(validate_start, schema_uri),
         workers=cpus,
-        maxsize=1000)
+        maxsize=1000
+    )
 
     for line_counter, validation_errors in stage:
-        is_file_fine=True
+
+        is_file_fine = True
         line_valid = True
 
         if validation_errors:
@@ -49,7 +53,6 @@ def validate(file_descriptor, schema_uri):
             input_valid = False
             for path, message in validation_errors:
                 logger.error('fail @ %i.%s %s', line_counter, path, message)
-
 
     # If there were issues with input file, e.g. because it was empty, flag it
     if not is_file_fine:

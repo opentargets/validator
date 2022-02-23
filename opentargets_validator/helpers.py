@@ -55,9 +55,10 @@ def generate_validator_from_schema(schema_uri):
 
 
 def file_or_resource(fname=None):
-    '''get filename and check if in getcwd then get from
+    """
+    get filename and check if in getcwd then get from
     the package resources folder
-    '''
+    """
     if fname is not None:
         filename = os.path.expanduser(fname)
 
@@ -69,4 +70,3 @@ def file_or_resource(fname=None):
 
         return abs_filename if os.path.isfile(abs_filename) \
             else res.resource_filename(resource_package, resource_path)
-
