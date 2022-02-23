@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-from __future__ import unicode_literals
 from setuptools import setup
+from setuptools.command.install import install
 import io
 import os
+import sys
 
 
 pkg_dir = os.path.dirname(__file__)
@@ -17,6 +18,15 @@ long_description = ""
 readme_path = os.path.join(pkg_dir, 'README.md')
 with io.open(readme_path, encoding='utf-8') as readme_file:
     long_description = readme_file.read()
+
+
+class VerifyVersionCommand(install):
+    description = 'Verify that the git tag matches CircleCI version'
+
+    def run(self):
+        tag = os.getenv('CIRCLE_TAG')
+        if tag != __version__:
+            sys.exit(f'Git tag {tag} does not match the version of this app {__version__}')
 
 
 setup(
@@ -59,9 +69,14 @@ setup(
     ],
     extras_require={
         'dev': [
+            'build',
             'codecov',
-            'pytest-cov'
+            'pytest-cov',
+            'twine'
         ]
     },
-    python_requires='>=3.6'
+    python_requires='>=3.6',
+    cmdclass={
+        'verify': VerifyVersionCommand,
+    }
 )
