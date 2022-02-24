@@ -1,12 +1,8 @@
 [![PyPI version](https://badge.fury.io/py/opentargets-validator.svg)](https://badge.fury.io/py/opentargets-validator)
-
-[![Build Status](https://travis-ci.org/opentargets/validator.svg?branch=master)](https://travis-ci.org/opentargets/validator)
-
-[![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
-
-[![Docker Repository on Quay.io](https://quay.io/repository/opentargets/validator/status "Docker Repository on Quay.io")](https://quay.io/repository/opentargets/validator)
-
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/opentargets-validator/badges/version.svg)](https://anaconda.org/bioconda/opentargets-validator)
+[![Build Status](https://travis-ci.org/opentargets/validator.svg?branch=master)](https://travis-ci.org/opentargets/validator)
+[![Docker Repository on Quay.io](https://quay.io/repository/opentargets/validator/status "Docker Repository on Quay.io")](https://quay.io/repository/opentargets/validator)
+[![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
 
 # opentargets-validator
 
@@ -68,10 +64,6 @@ Examples of acceptable paths are:
 opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/opentargets.json https://where/myfile/is/located.json
 ```
 
-## Note
-
-There used to be a `--log-lines` argument that could be used to exit early when a certain number of errors occored. This is no longer supported, and with parallelization improvements it is rarely necessary in practice.
-
 ## How to develop 
 
 Within a [virtualenv](https://virtualenv.pypa.io/en/latest/) you can install with:
@@ -86,6 +78,4 @@ and you can run the tests with:
 pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 ```
 
-This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator) .
-
-Releases are put on [PyPI](https://pypi.org/project/opentargets-validator) automatically via Travis from GitHub tags.
+This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator). Releases are put on [PyPI](https://pypi.org/project/opentargets-validator) automatically via Travis from GitHub tags.

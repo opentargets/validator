@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from __future__ import unicode_literals
 from setuptools import setup
+from setuptools.command.install import install
 import io
 import os
+import sys
 
 
 pkg_dir = os.path.dirname(__file__)
@@ -19,7 +20,17 @@ with io.open(readme_path, encoding='utf-8') as readme_file:
     long_description = readme_file.read()
 
 
-setup(name=__pkgname__,
+class VerifyVersionCommand(install):
+    description = 'Verify that the git tag matches CircleCI version'
+
+    def run(self):
+        tag = os.getenv('CIRCLE_TAG')
+        if tag != __version__:
+            sys.exit(f'Git tag {tag} does not match the version of this app {__version__}')
+
+
+setup(
+    name=__pkgname__,
     version=__version__,
     description=__description__,
     long_description=long_description,
@@ -30,19 +41,42 @@ setup(name=__pkgname__,
     packages=['opentargets_validator'],
     license=__license__,
     download_url=__homepage__ + '/archive/' + __version__ + '.tar.gz',
-    keywords=['opentargets', 'bioinformatics', 'python2'],
+    keywords=[
+        'opentargets',
+        'bioinformatics',
+        'python3'
+    ],
     platforms=['any'],
-    #make sure this matches requirements.txt
-    install_requires=['requests','jsonschema==3.0.0a3', 'rfc3987', 'future', 'simplejson', 'pypeln==0.1.6', 'opentargets-urlzsource'],
+    install_requires=[
+        'requests==2.27.1',
+        'jsonschema==4.4.0',
+        'rfc3987==1.3.8',
+        'simplejson==3.17.6',
+        'pypeln==0.4.9',
+        'opentargets-urlzsource==1.0.0'
+    ],
     dependency_links=[],
     include_package_data=True,
-    entry_points={'console_scripts': ['opentargets_validator=opentargets_validator.cli:main'],},
+    entry_points={
+        'console_scripts': [
+            'opentargets_validator=opentargets_validator.cli:main'
+        ],
+    },
     data_files=[],
     scripts=[],
     classifiers=[
-    'Programming Language :: Python :: 2',
-    'Programming Language :: Python :: 3'
+        'Programming Language :: Python :: 3'
     ],
-    #make sure this matches requirements.txt
-    extras_require={'dev': ['pytest-cov','codecov']}
+    extras_require={
+        'dev': [
+            'build',
+            'codecov',
+            'pytest-cov',
+            'twine'
+        ]
+    },
+    python_requires='>=3.7',
+    cmdclass={
+        'verify': VerifyVersionCommand,
+    }
 )

@@ -1,18 +1,25 @@
 import unittest
 import os
-from opentargets_validator.helpers import file_or_resource
 from opentargets_validator.validator import validate
 from opentargets_urlzsource import URLZSource
 
+
 class MinimalTests(unittest.TestCase):
 
+    def setUp(self):
+        self.resources_path = os.path.dirname(os.path.realpath(__file__))
+        self.schema_uri = 'file://' + os.path.join(self.resources_path, 'resources', 'minimal.schema.json')
+
     def test_minimal(self):
-        resources_path = os.path.dirname(os.path.realpath(__file__))
-        data_source_file = resources_path + os.path.sep + "resources" + os.path.sep + "minimal.data.json"
-
-        schema_source_file = resources_path + os.path.sep + "resources" + os.path.sep + "minimal.schema.json"
-        schema_uri = "file://"+schema_source_file
-
-        with URLZSource(data_source_file).open() as data_file_handle:
-            valid = validate(data_file_handle, schema_uri)
+        """Correct data must pass validation."""
+        correct_filename = os.path.join(self.resources_path, 'resources', 'minimal.data.json')
+        with URLZSource(correct_filename).open() as data_file_handle:
+            valid = validate(data_file_handle, self.schema_uri)
             self.assertTrue(valid)
+
+    def test_incorrect_fails(self):
+        """Incorrect data must raise a validation error."""
+        incorrect_filename = os.path.join(self.resources_path, 'resources', 'minimal.incorrect.json')
+        with URLZSource(incorrect_filename).open() as data_file_handle:
+            valid = validate(data_file_handle, self.schema_uri)
+            self.assertFalse(valid)
