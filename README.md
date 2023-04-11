@@ -46,7 +46,8 @@ You have two options:
 ### Read from stdin
 
 ```sh
-cat file.json | opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/opentargets.json
+cat file.json | opentargets_validator --schema
+https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/schemas/disease_target_evidence.json
 ```
 
 ### Read from positional argument
@@ -61,7 +62,9 @@ Examples of acceptable paths are:
 - location/file.json
 
 ```sh
-opentargets_validator --schema https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/opentargets.json https://where/myfile/is/located.json
+opentargets_validator --schema 
+https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/schemas/disease_target_evidence.json
+https://where/myfile/is/located.json
 ```
 
 ## How to develop 
