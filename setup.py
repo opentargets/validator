@@ -48,7 +48,7 @@ setup(
     ],
     platforms=['any'],
     install_requires=[
-        'requests==2.27.1',
+        'requests==2.31.0',
         'jsonschema==4.4.0',
         'rfc3987==1.3.8',
         'simplejson==3.17.6',
