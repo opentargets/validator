@@ -1,7 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/opentargets-validator.svg)](https://badge.fury.io/py/opentargets-validator)
-[![Anaconda-Server Badge](https://anaconda.org/bioconda/opentargets-validator/badges/version.svg)](https://anaconda.org/bioconda/opentargets-validator)
 [![Build Status](https://travis-ci.org/opentargets/validator.svg?branch=master)](https://travis-ci.org/opentargets/validator)
-[![Docker Repository on Quay.io](https://quay.io/repository/opentargets/validator/status "Docker Repository on Quay.io")](https://quay.io/repository/opentargets/validator)
 [![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
 
 # Open Targets JSON validator
@@ -44,8 +42,10 @@ pip install -e .[dev]
 
 The tests can be run with:
 ```sh
-pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
+pip install --upgrade pytest pytest-cov
+python -m pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 ```
+Note that you should always use `python -m pytest` and not `pytest`, because the latter might invoke a system-wide installation (if you have any) and cause incorrect test results.
 
 This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator).
 

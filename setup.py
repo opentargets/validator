@@ -48,12 +48,8 @@ setup(
     ],
     platforms=['any'],
     install_requires=[
-        'requests==2.27.1',
-        'jsonschema==4.4.0',
-        'rfc3987==1.3.8',
-        'simplejson==3.17.6',
-        'pypeln==0.4.9',
-        'opentargets-urlzsource==1.0.0'
+        'requests>=2.31.0',
+        'jsonschema>=4.19.0',
     ],
     dependency_links=[],
     include_package_data=True,
