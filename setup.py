@@ -48,7 +48,6 @@ setup(
     ],
     platforms=['any'],
     install_requires=[
-        'requests>=2.31.0',
         'jsonschema>=4.19.0',
     ],
     dependency_links=[],

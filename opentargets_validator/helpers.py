@@ -1,4 +1,3 @@
-import codecs
 import gzip
 import io
 import os
