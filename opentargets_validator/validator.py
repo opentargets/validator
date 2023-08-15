@@ -2,6 +2,7 @@ import functools
 import logging
 import multiprocessing
 
+import jsonschema
 import pypeln
 import simplejson as json
 
@@ -9,12 +10,14 @@ from .helpers import generate_validator_from_schema
 
 
 def validate_single_line(line_number, line, validator, logger):
+
     # Does the line contain a valid JSON object at all?
     try:
         parsed_line = json.loads(line)
     except Exception as e:
         logger.error(f'Line #{line_number} is not a valid JSON object. Full line: ~~~{line}~~~. Error: ~~~{e}~~~.')
         return False
+
     # Does the JSON object in the line validate against the schema?
     validation_errors = ' ||| '.join([(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)])
     if validation_errors:
@@ -42,8 +45,17 @@ def validator_mapped(data, validator, logger):
     return line_counter, validation_errors
 
 
-def validate(file_descriptor, schema_uri):
+def validate(data_fd, schema_fd):
     logger = logging.getLogger(__name__)
+
+    # Create the validator object
+    try:
+        schema = json.load(schema_fd)
+    except Exception as e:
+        logger.error('JSON schema is not valid. Error: ~~~{e}~~~.')
+        return False
+    return jsonschema.Draft7Validator(schema)
+
     input_valid = True
 
     cpus = multiprocessing.cpu_count()
