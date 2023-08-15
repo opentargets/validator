@@ -48,7 +48,7 @@ setup(
     ],
     platforms=['any'],
     install_requires=[
-        'jsonschema>=4.19.0',
+        'fastjsonschema>=2.18.0',
     ],
     dependency_links=[],
     include_package_data=True,
