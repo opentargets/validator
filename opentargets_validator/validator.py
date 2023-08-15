@@ -1,5 +1,8 @@
+import copy
+from itertools import islice
 import json
 import logging
+import concurrent.futures
 import pathos.multiprocessing
 import fastjsonschema
 
@@ -35,13 +38,13 @@ def validate(data_fd, schema_fd):
 
     # Load the schema and check if it is itself valid.
     try:
-        schema = json.load(schema_fd)
+        schema_contents = json.load(schema_fd)
     except Exception as e:
         logger.error(f'JSON schema is not valid. Error: ~~~{e}~~~.')
         return False
 
     # Compile the validator.
-    validator = fastjsonschema.compile(schema)
+    validator = fastjsonschema.compile(schema_contents)
 
     # Validate all input lines concurrently.
     with pathos.multiprocessing.ProcessingPool(processes=pathos.multiprocessing.cpu_count()) as pool:
