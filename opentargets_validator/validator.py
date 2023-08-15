@@ -1,3 +1,4 @@
+import concurrent.futures
 import functools
 import logging
 import multiprocessing
@@ -10,6 +11,9 @@ from .helpers import generate_validator_from_schema
 
 
 def validate_single_line(line_number, line, validator, logger):
+
+    # Lines come directly from file object-like iterators, so we should strip the end of line characters.
+    line = line.rstrip()
 
     # Does the line contain a valid JSON object at all?
     try:
@@ -48,17 +52,34 @@ def validator_mapped(data, validator, logger):
 def validate(data_fd, schema_fd):
     logger = logging.getLogger(__name__)
 
-    # Create the validator object
+    # Create the validator object.
     try:
         schema = json.load(schema_fd)
     except Exception as e:
         logger.error('JSON schema is not valid. Error: ~~~{e}~~~.')
         return False
-    return jsonschema.Draft7Validator(schema)
+    validator = jsonschema.Draft7Validator(schema)
+
+    # Validate all input lines concurrently.
+    file_is_valid = True
+    with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        # Submit the calculations.
+        futures = [
+            executor.submit(validate_single_line, line_number, line, validator, logger)
+            for line_number, line in enumerate(data_fd, 1)
+        ]
+        # Process results.
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if not result:
+                file_is_valid = False
+
+    return file_is_valid
+
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        executor.map(validate_single_line_partial, validate_iterator)
 
     input_valid = True
-
-    cpus = multiprocessing.cpu_count()
 
     # Avoid problems due to pypeln behaving unexpectedly because of problematic input file, e.g. empty input file that crashes the enumerate call
     is_file_fine = False
