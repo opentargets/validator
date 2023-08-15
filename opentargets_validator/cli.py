@@ -1,12 +1,9 @@
 import argparse
-from argparse import RawTextHelpFormatter
 import logging
 import logging.config
 import sys
 
-from opentargets_urlzsource import URLZSource
-
-from .helpers import file_or_resource
+from .helpers import file_or_resource, open_source
 from .validator import validate
 from .version import __version__
 
@@ -22,10 +19,10 @@ def main():
     * Local uncompressed JSON (*.json)
     * Local compressed JSON (*.json.gz)
     * Remote uncompressed JSON (https://example.com/example.json)""")
-    input_files.add_argument('data_source_file', nargs='?', default='-', help='Data file to validate. If not specified, STDIN is the default.')
+    input_files.add_argument('data', nargs='?', default='-', help='Data file to validate. If not specified, STDIN is the default.')
     input_files.add_argument("--schema", required=True, help="Schema file to validate against. Mandatory.")
 
-    parser.add_argument("--log-level", dest='loglevel', help="Log level. Default: WARNING", default='WARNING')
+    parser.add_argument("--log-level", dest='loglevel', help="Log level. Default: INFO", default='INFO')
     args = parser.parse_args()
 
     if args.loglevel:
@@ -36,19 +33,12 @@ def main():
         except Exception as e:
             root_logger.exception(e)
 
-    valid = True
-    if args.data_source_file == '-':
-        valid = validate(sys.stdin, args.schema)
-    else:
-        with URLZSource(args.data_source_file).open() as fh:
-            valid = validate(fh, args.schema)
+    data = open_source(args.data)
+    schema = open_source(args.schema)
+    valid = validate(data, schema)
 
-    #if we had any validation errors, exit with status 2
-    if not valid:
-        return 2
-
-    #if everything was fine, exit with status 0
-    return 0
+    # Exit code.
+    return 0 if valid else 1
 
 
 if __name__ == '__main__':
