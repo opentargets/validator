@@ -1,5 +1,6 @@
 import codecs
 import gzip
+import io
 import os
 import sys
 import urllib.request
@@ -34,7 +35,7 @@ def open_source(source):
     if '://' in source:
         url_source = urllib.request.urlopen(source)
         encoding = url_source.headers.get_content_charset()
-        return codecs.iterdecode(url_source, encoding)
+        return io.StringIO(url_source.read().decode(encoding))
     if source.endswith('.gz'):
         return gzip.open(source, 'rt')
     return open(source, 'rt')

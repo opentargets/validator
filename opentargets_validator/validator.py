@@ -39,7 +39,7 @@ def validate(data_fd, schema_fd):
     try:
         schema = json.load(schema_fd)
     except Exception as e:
-        logger.error('JSON schema is not valid. Error: ~~~{e}~~~.')
+        logger.error(f'JSON schema is not valid. Error: ~~~{e}~~~.')
         return False
 
     # Validate all input lines concurrently.
