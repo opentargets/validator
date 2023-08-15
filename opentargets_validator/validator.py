@@ -8,9 +8,17 @@ import fastjsonschema
 from .helpers import box_text
 
 
-def validate_single_line(line_number, line, validator, logger):
+def init_validation_pool(validator, logger):
+    # Initialise pool process global variables.
+    global g_validator
+    global g_logger
+    g_validator = validator
+    g_logger = logger
+
+
+def validate_single_line(line_number, line):
     def format_error(error_type):
-        logger.error(f'Line #{line_number} {error_type}. Error:\n{box_text(str(e))}\n{line}\n\n\n')
+        g_logger.error(f'Line #{line_number} {error_type}. Error:\n{box_text(str(e))}\n{line}\n\n\n')
 
     # Lines come directly from file object-like iterators, so we should strip the end of line characters.
     line = line.rstrip()
@@ -24,7 +32,7 @@ def validate_single_line(line_number, line, validator, logger):
 
     # Does the JSON object in the line validate against the schema?
     try:
-        validator(parsed_line)
+        g_validator(parsed_line)
     except Exception as e:
         format_error('is a valid JSON object, but it does not match the schema')
         return False
@@ -46,10 +54,10 @@ def validate(data_fd, schema_fd):
     validator = fastjsonschema.compile(schema)
 
     # Validate all input lines concurrently.
-    with concurrent.futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=multiprocessing.cpu_count(), initializer=init_validation_pool, initargs=(validator, logger)) as executor:
         # Submit the calculations.
         futures = [
-            executor.submit(validate_single_line, line_number, line, validator, logger)
+            executor.submit(validate_single_line, line_number, line)
             for line_number, line in enumerate(data_fd, 1)
         ]
         # Process results.
