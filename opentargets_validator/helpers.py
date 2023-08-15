@@ -87,3 +87,14 @@ def open_source(source):
     if source.endswith('.gz'):
         return gzip.open(source, 'rt')
     return open(source, 'rt')
+
+def box_text(s):
+    lines = s.split('\n')
+    max_width = max(map(len, lines))
+    boxed_lines = ['┃' + l.ljust(max_width) + '┃' for l in lines]
+    return '\n'.join([
+        '┏' + '━' * max_width + '┓',
+        *boxed_lines,
+        '┗' + '━' * max_width + '┛',
+    ])
+
