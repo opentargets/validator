@@ -1,4 +1,8 @@
+import codecs
+import gzip
 import os
+import sys
+import urllib.request
 
 import jsonschema as jss
 import pkg_resources as res
@@ -70,3 +74,16 @@ def file_or_resource(fname=None):
 
         return abs_filename if os.path.isfile(abs_filename) \
             else res.resource_filename(resource_package, resource_path)
+
+
+def open_source(source):
+    """Opens a data source and returns a file handler-like object."""
+    if source == '-':
+        return sys.stdin
+    if '://' in source:
+        url_source = urllib.request.urlopen(source)
+        encoding = url_source.headers.get_content_charset()
+        return codecs.iterdecode(url_source, encoding)
+    if source.endswith('.gz'):
+        return gzip.open(source, 'rt')
+    return open(source, 'rt')
