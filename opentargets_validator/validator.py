@@ -8,6 +8,21 @@ import simplejson as json
 from .helpers import generate_validator_from_schema
 
 
+def validate_single_line(line_number, line, validator, logger):
+    # Does the line contain a valid JSON object at all?
+    try:
+        parsed_line = json.loads(line)
+    except Exception as e:
+        logger.error(f'Line #{line_number} is not a valid JSON object. Full line: ~~~{line}~~~. Error: ~~~{e}~~~.')
+        return False
+    # Does the JSON object in the line validate against the schema?
+    validation_errors = ' ||| '.join([(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)])
+    if validation_errors:
+        logger.error(f'Line #{line_number} is a valid JSON object, but it does not match the schema. Full line: ~~~{line}. Error: ~~~{validation_errors}~~~.')
+        return False
+    return True
+
+
 def validate_start(schema_uri):
     validator = generate_validator_from_schema(schema_uri)
     logger = logging.getLogger(__name__)
