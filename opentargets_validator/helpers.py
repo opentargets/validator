@@ -18,34 +18,34 @@ def file_or_resource(fname=None):
         filename = os.path.expanduser(fname)
 
         resource_package = opentargets_validator.__name__
-        resource_path = os.path.sep.join(('resources', filename))
+        resource_path = os.path.sep.join(("resources", filename))
 
-        abs_filename = os.path.join(os.path.abspath(os.getcwd()), filename) \
-                       if not os.path.isabs(filename) else filename
+        abs_filename = os.path.join(os.path.abspath(os.getcwd()), filename) if not os.path.isabs(filename) else filename
 
-        return abs_filename if os.path.isfile(abs_filename) \
-            else res.resource_filename(resource_package, resource_path)
+        return abs_filename if os.path.isfile(abs_filename) else res.resource_filename(resource_package, resource_path)
 
 
 def open_source(source):
     """Opens a data source and returns a file handler-like object."""
-    if source == '-':
+    if source == "-":
         return sys.stdin
-    if '://' in source:
+    if "://" in source:
         url_source = urllib.request.urlopen(source)
         encoding = url_source.headers.get_content_charset()
         return io.StringIO(url_source.read().decode(encoding))
-    if source.endswith('.gz'):
-        return gzip.open(source, 'rt')
-    return open(source, 'rt')
+    if source.endswith(".gz"):
+        return gzip.open(source, "rt")
+    return open(source, "rt")
 
 
 def box_text(s):
-    lines = s.split('\n')
+    lines = s.split("\n")
     max_width = max(map(len, lines))
-    boxed_lines = ['┃' + l.ljust(max_width) + '┃' for l in lines]
-    return '\n'.join([
-        '┏' + '━' * max_width + '┓',
-        *boxed_lines,
-        '┗' + '━' * max_width + '┛',
-    ])
+    boxed_lines = ["┃" + l.ljust(max_width) + "┃" for l in lines]
+    return "\n".join(
+        [
+            "┏" + "━" * max_width + "┓",
+            *boxed_lines,
+            "┗" + "━" * max_width + "┛",
+        ]
+    )

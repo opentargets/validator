@@ -34,7 +34,7 @@ Each input file can be read from:
 * Uncompressed local file (`example.json`)
 * GZIP-compressed local file (`example.json.gz`)
 
-## Development instructions 
+## Development instructions
 An editable copy can be installed within a [virtualenv](https://virtualenv.pypa.io/en/latest/):
 ```bash
 pip install -e .[dev]
