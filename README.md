@@ -28,21 +28,22 @@ The validator has to be provided with two inputs:
 1. Data to validate. It has to contain exactly one complete JSON object per line.
 2. Schema to validate against. It can be any valid JSON Draft 7 schema.
 
-Each input file can be read from:
+Either of the input files (data and schema) can be read from:
 * STDIN (`-`)
 * Uncompressed remote file (https://example.com/example.json)
 * Uncompressed local file (`example.json`)
 * GZIP-compressed local file (`example.json.gz`)
 
 ## Development instructions
-An editable copy can be installed within a [virtualenv](https://virtualenv.pypa.io/en/latest/):
+An editable copy can be installed within a virtual environment:
 ```bash
+python -m venv env
+source env/bin/activate
 pip install -e .[dev]
 ```
 
 The tests can be run with:
 ```sh
-pip install --upgrade pytest pytest-cov
 python -m pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 ```
 Note that you should always use `python -m pytest` and not `pytest`, because the latter might invoke a system-wide installation (if you have any) and cause incorrect test results.

@@ -30,7 +30,7 @@ def main():
     )
     input_files.add_argument("--schema", required=True, help="Schema file to validate against. Mandatory.")
 
-    parser.add_argument("--log-level", dest="loglevel", help="Log level. Default: INFO", default="INFO")
+    parser.add_argument("--log-level", dest="loglevel", help="Log level. Default: %(default)s", default="INFO")
     parser.add_argument("-v", "-V", "--version", action="version", version=__version__)
     args = parser.parse_args()
 

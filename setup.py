@@ -55,7 +55,7 @@ setup(
     data_files=[],
     scripts=[],
     classifiers=["Programming Language :: Python :: 3"],
-    extras_require={"dev": ["build", "codecov", "pytest-cov", "twine"]},
+    extras_require={"dev": ["build", "codecov", "pytest", "pytest-cov", "twine"]},
     python_requires=">=3.8",
     cmdclass={
         "verify": VerifyVersionCommand,
