@@ -49,6 +49,7 @@ setup(
     platforms=['any'],
     install_requires=[
         'fastjsonschema>=2.18.0',
+        'pathos>=0.3.1',
     ],
     dependency_links=[],
     include_package_data=True,
