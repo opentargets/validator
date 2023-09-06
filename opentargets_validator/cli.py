@@ -19,10 +19,11 @@ def main():
     * Local uncompressed JSON (*.json)
     * Local compressed JSON (*.json.gz)
     * Remote uncompressed JSON (https://example.com/example.json)""")
-    input_files.add_argument('data', nargs='?', default='-', help='Data file to validate. If not specified, STDIN is the default.')
+    input_files.add_argument("data", nargs='?', default='-', help="Data file to validate. If not specified, STDIN is the default.")
     input_files.add_argument("--schema", required=True, help="Schema file to validate against. Mandatory.")
 
-    parser.add_argument("--log-level", dest='loglevel', help="Log level. Default: INFO", default='INFO')
+    parser.add_argument("--log-level", dest="loglevel", help="Log level. Default: INFO", default='INFO')
+    parser.add_argument("-v", "-V", "--version", action="version", version=__version__)
     args = parser.parse_args()
 
     if args.loglevel:
