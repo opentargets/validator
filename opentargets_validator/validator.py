@@ -71,10 +71,10 @@ def validate(data_fd, schema_fd):
 
     # Validate all input lines concurrently.
     with pathos.multiprocessing.ProcessPool(processes=pathos.multiprocessing.cpu_count()) as pool:
-        validity = pool.imap(
+        validity = list(pool.imap(
             lambda args: validate_block_of_lines(*args),
             args_list_iterator,
-        )
+        ))
 
     # Process the results.
     valid, invalid = sum([v[0] for v in validity]), sum([v[1] for v in validity])
