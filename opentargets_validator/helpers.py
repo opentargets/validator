@@ -27,6 +27,12 @@ def file_or_resource(fname=None):
 
 def open_source(source):
     """Opens a data source and returns a file handler-like object."""
+
+    # Legacy way of specifying local files, needs to be stripped.
+    if source.startswith("file://"):
+        source = source[7:]
+
+    # Create a line iterator depending on file type.
     if source == "-":
         return sys.stdin
     if "://" in source:
