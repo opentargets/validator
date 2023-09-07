@@ -1,3 +1,4 @@
+import itertools
 import json
 import logging
 import pathos.multiprocessing
@@ -6,28 +7,44 @@ import fastjsonschema
 from .helpers import box_text
 
 
-def validate_single_line(line_number, line, validator, logger):
+def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
     def format_error(error_type, e):
-        logger.error(f"Line #{line_number} {error_type}. Error:\n{box_text(str(e))}\n{line}\n\n\n")
+        logger.error(f"Line #{line_index} {error_type}. Error:\n{box_text(str(e))}\n{line}\n\n\n")
 
-    # Lines come directly from file object-like iterators, so we should strip the end of line characters.
-    line = line.rstrip()
+    valid, invalid = 0, 0
 
-    # Does the line contain a valid JSON object at all?
-    try:
-        parsed_line = json.loads(line)
-    except Exception as e:
-        format_error("is not a valid JSON object", e)
-        return False
+    for line_index, line in list_of_lines_with_indexes:
+        # Lines come directly from file object-like iterators, so we should strip the end of line characters.
+        line = line.rstrip()
 
-    # Does the JSON object in the line validate against the schema?
-    try:
-        validator(parsed_line)
-    except Exception as e:
-        format_error("is a valid JSON object, but it does not match the schema", e)
-        return False
+        # Does the line contain a valid JSON object at all?
+        try:
+            parsed_line = json.loads(line)
+        except Exception as e:
+            format_error("is not a valid JSON object", e)
+            invalid += 1
+            continue
 
-    return True
+        # Does the JSON object in the line validate against the schema?
+        try:
+            validator(parsed_line)
+        except Exception as e:
+            format_error("is a valid JSON object, but it does not match the schema", e)
+            invalid += 1
+            continue
+
+        valid += 1
+
+    return valid, invalid
+
+
+def batch_iterator(iterator, batch_size=5000):
+    """Convert an iterator into another iterator that returns blocks of a specified batch size."""
+    while True:
+        batch = list(itertools.islice(iterator, batch_size))
+        if not batch:
+            break
+        yield batch
 
 
 def validate(data_fd, schema_fd):
@@ -43,14 +60,23 @@ def validate(data_fd, schema_fd):
     # Compile the validator.
     validator = fastjsonschema.compile(schema_contents)
 
+    # Line by line iterator.
+    line_iterator = data_fd
+    # Enumerate to keep track of line numbers.
+    enumerated_iterator = enumerate(line_iterator, 1)
+    # Package previous iterator into blocks of multiple lines to increase performance.
+    blocked_iterator = batch_iterator(enumerated_iterator)
+    # Final argument list iterator.
+    args_list_iterator = ([line_block, validator, logger] for line_block in blocked_iterator)
+
     # Validate all input lines concurrently.
-    with pathos.multiprocessing.ProcessingPool(processes=pathos.multiprocessing.cpu_count()) as pool:
-        validity = pool.map(
-            lambda args: validate_single_line(*args),
-            [(line_number, line, validator, logger) for line_number, line in enumerate(data_fd, 1)],
+    with pathos.multiprocessing.ProcessPool(processes=pathos.multiprocessing.cpu_count()) as pool:
+        validity = pool.imap(
+            lambda args: validate_block_of_lines(*args),
+            args_list_iterator,
         )
 
     # Process the results.
-    valid, invalid = len([v for v in validity if v]), len([v for v in validity if not v])
+    valid, invalid = sum([v[0] for v in validity]), sum([v[1] for v in validity])
     logger.info(f"Processing is completed. Total {valid} valid records, {invalid} invalid records.")
     return invalid == 0
