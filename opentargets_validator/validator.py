@@ -9,7 +9,7 @@ from .helpers import box_text
 
 def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
     def format_error(error_type, e):
-        logger.error(f"Line #{line_index} {error_type}. Error:\n{box_text(str(e))}\n{line}\n\n\n")
+        logger.error(f"\nLine #{line_index} {error_type}:\n{box_text(str(e))}\n{line}\n\n\n")
 
     valid, invalid = 0, 0
 
