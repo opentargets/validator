@@ -16,6 +16,25 @@
         "description": "Age in years which must be equal to or greater than zero.",
         "type": "integer",
         "minimum": 0
+      },
+      "exampleEnumField": {
+        "description": "A field with a defined accepted values",
+        "type": "string",
+        "enum": [
+          "foo",
+          "bar"
+        ]
+      },
+      "examplePatternField": {
+        "description": "A field where values need to follow a pattern.",
+        "type": "string",
+        "pattern": "foo_\\d+"
       }
-    }
+    },
+    "required": [
+      "firstName",
+      "lastName",
+      "age"
+    ],
+    "additionalProperties": false
   }

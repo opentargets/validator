@@ -1,62 +1,82 @@
-import functools
+import itertools
+import json
 import logging
-import multiprocessing
+import pathos.multiprocessing
+import fastjsonschema
 
-import pypeln
-import simplejson as json
-
-from .helpers import generate_validator_from_schema
+from .helpers import box_text
 
 
-def validate_start(schema_uri):
-    validator = generate_validator_from_schema(schema_uri)
+def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
+    def format_error(error_type, e):
+        logger.error(f"\nLine #{line_index} {error_type}:\n{box_text(str(e))}\n{line}\n\n\n")
+
+    valid, invalid = 0, 0
+
+    for line_index, line in list_of_lines_with_indexes:
+        # Lines come directly from file object-like iterators, so we should strip the end of line characters.
+        line = line.rstrip()
+
+        # Does the line contain a valid JSON object at all?
+        try:
+            parsed_line = json.loads(line)
+        except Exception as e:
+            format_error("is not a valid JSON object", e)
+            invalid += 1
+            continue
+
+        # Does the JSON object in the line validate against the schema?
+        try:
+            validator(parsed_line)
+        except Exception as e:
+            format_error("is a valid JSON object, but it does not match the schema", e)
+            invalid += 1
+            continue
+
+        valid += 1
+
+    return valid, invalid
+
+
+def batch_iterator(iterator, batch_size=5000):
+    """Convert an iterator into another iterator that returns blocks of a specified batch size."""
+    while True:
+        batch = list(itertools.islice(iterator, batch_size))
+        if not batch:
+            break
+        yield batch
+
+
+def validate(data_fd, schema_fd):
     logger = logging.getLogger(__name__)
-    return dict(validator=validator, logger=logger)
 
-
-def validator_mapped(data, validator, logger):
-    line_counter, line = data
+    # Load the schema and check if it is itself valid.
     try:
-        parsed_line = json.loads(line)
+        schema_contents = json.load(schema_fd)
     except Exception as e:
-        logger.error('failed parsing line %i: %s %s', line_counter, line, e)
-        return line_counter, None, None
+        logger.error(f"JSON schema is not valid. Error: ~~~{e}~~~.")
+        return False
 
-    validation_errors = [(".".join(error.absolute_path), error.message) for error in validator.iter_errors(parsed_line)]
+    # Compile the validator.
+    validator = fastjsonschema.compile(schema_contents)
 
-    return line_counter, validation_errors
+    # Line by line iterator.
+    line_iterator = data_fd
+    # Enumerate to keep track of line numbers.
+    enumerated_iterator = enumerate(line_iterator, 1)
+    # Package previous iterator into blocks of multiple lines to increase performance.
+    blocked_iterator = batch_iterator(enumerated_iterator)
+    # Final argument list iterator.
+    args_list_iterator = ([line_block, validator, logger] for line_block in blocked_iterator)
 
+    # Validate all input lines concurrently.
+    with pathos.multiprocessing.ProcessPool(processes=pathos.multiprocessing.cpu_count()) as pool:
+        validity = list(pool.imap(
+            lambda args: validate_block_of_lines(*args),
+            args_list_iterator,
+        ))
 
-def validate(file_descriptor, schema_uri):
-    logger = logging.getLogger(__name__)
-    input_valid = True
-
-    cpus = multiprocessing.cpu_count()
-
-    # Avoid problems due to pypeln behaving unexpectedly because of problematic input file, e.g. empty input file that crashes the enumerate call
-    is_file_fine = False
-    stage = pypeln.process.map(
-        validator_mapped,
-        enumerate(file_descriptor, start=1),
-        on_start=functools.partial(validate_start, schema_uri),
-        workers=cpus,
-        maxsize=1000
-    )
-
-    for line_counter, validation_errors in stage:
-
-        is_file_fine = True
-        line_valid = True
-
-        if validation_errors:
-            line_valid = False
-            input_valid = False
-            for path, message in validation_errors:
-                logger.error('fail @ %i.%s %s', line_counter, path, message)
-
-    # If there were issues with input file, e.g. because it was empty, flag it
-    if not is_file_fine:
-        logger.error("Issue with input file, probably because it was empty")
-        input_valid = False
-
-    return input_valid
+    # Process the results.
+    valid, invalid = sum([v[0] for v in validity]), sum([v[1] for v in validity])
+    logger.info(f"Processing is completed. Total {valid} valid records, {invalid} invalid records.")
+    return invalid == 0

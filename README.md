@@ -1,84 +1,53 @@
 [![PyPI version](https://badge.fury.io/py/opentargets-validator.svg)](https://badge.fury.io/py/opentargets-validator)
-[![Anaconda-Server Badge](https://anaconda.org/bioconda/opentargets-validator/badges/version.svg)](https://anaconda.org/bioconda/opentargets-validator)
 [![Build Status](https://travis-ci.org/opentargets/validator.svg?branch=master)](https://travis-ci.org/opentargets/validator)
-[![Docker Repository on Quay.io](https://quay.io/repository/opentargets/validator/status "Docker Repository on Quay.io")](https://quay.io/repository/opentargets/validator)
 [![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
 
-# opentargets-validator
+# Open Targets JSON validator
+The `opentargets-validator` tool in this repository validates JSON files which are submitted to Open Targets by various [data sources](https://docs.targetvalidation.org/data-sources/data-sources) against the Open Targets [JSON schemas](https://github.com/opentargets/json_schema).
 
-Evidence string validator.
-
-## Purpose
-
-This tool is intended to validate JSON files that have a single JSON object per line. This is the format that is required from the [data sources](https://docs.targetvalidation.org/data-sources/data-sources) that provide us with evidence for our target-disease associations. 
-
-The validator will check the expected structure, defined in a JSON schema which must be provided via a `--schema` argument. 
-
-Be aware that this is *not* a general-purpose JSON validator, and use of "pretty-printed" JSON will cause errors. 
-
-## Schema URLs
-The Open Targets JSON schema is located at https://github.com/opentargets/json_schema. Note that you should *not* use `master` as this may change any time, instead use the latest available tag, e.g. `1.6.3`. If you are a data provider, you will always receive an email from Open Targets with information about what JSON schema version to use. Also, when specifying the schema to the validator you have to use the "raw" GitHub URL:
-
-`https://raw.githubusercontent.com/opentargets/json_schema/1.6.3/opentargets.json`
-
-## How to install it
-
-The easiest way is with pip:
-
-```sh
-pip install -U opentargets-validator
+## Installation
+```bash
+pip install --upgrade opentargets-validator
 ```
 
-It supports both Python 2 and Python 3.
-
-You can also use Conda:
-
-```sh
-conda install -c bioconda opentargets-validator
+## Usage examples
+Validating a local gzipped file against the latest schema version from GitHub:
+```bash
+opentargets_validator \
+  --schema https://raw.githubusercontent.com/opentargets/json_schema/master/schemas/disease_target_evidence.json \
+  evidence.json.gz
 ```
 
-## How to use it
-
-You have two options:
-- pass a filename or URL as a positional argument
-- read from stdin (e.g. a shell pipe)
-
-### Read from stdin
-
-```sh
-cat file.json | opentargets_validator --schema
-https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/schemas/disease_target_evidence.json
+Validating a portion of the local file against a local copy of the schema:
+```bash
+zcat evidence.json.gz | head -n 100 | opentargets_validator --schema evidence_schema.json
 ```
 
-### Read from positional argument
+## Input files
+The validator has to be provided with two inputs:
+1. Data to validate. It has to contain exactly one complete JSON object per line.
+2. Schema to validate against. It can be any valid JSON Draft 7 schema.
 
-This can automatically decompress gzip'ed files. Compression will be detected via filename e.g. ending with `.json.gz`.
+Either of the input files (data and schema) can be read from:
+* STDIN (`-`)
+* Uncompressed remote file (https://example.com/example.json)
+* Uncompressed local file (`example.json`)
+* GZIP-compressed local file (`example.json.gz`)
 
-Examples of acceptable paths are:
-- https://file/location/name.json
-- https://file/location/name.json.gz
-- file://relative/local/file.json
-- file:///absolute/file.json
-- location/file.json
-
-```sh
-opentargets_validator --schema 
-https://raw.githubusercontent.com/opentargets/json_schema/{tag_version}/schemas/disease_target_evidence.json
-https://where/myfile/is/located.json
+## Development instructions
+An editable copy can be installed within a virtual environment:
+```bash
+python -m venv env
+source env/bin/activate
+pip install -e ".[dev]"
 ```
 
-## How to develop 
-
-Within a [virtualenv](https://virtualenv.pypa.io/en/latest/) you can install with:
-
+The tests can be run with:
 ```sh
-pip install -e .[dev]
+python -m pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
 ```
+Note that you should always use `python -m pytest` and not `pytest`, because the latter might invoke a system-wide installation (if you have any) and cause incorrect test results.
 
-and you can run the tests with:
+This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator).
 
-```sh
-pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
-```
-
-This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator). Releases are put on [PyPI](https://pypi.org/project/opentargets-validator) automatically via Travis from GitHub tags.
+Releases are put on [PyPI](https://pypi.org/project/opentargets-validator) automatically via Travis from GitHub tags.
