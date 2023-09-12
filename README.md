@@ -39,7 +39,7 @@ An editable copy can be installed within a virtual environment:
 ```bash
 python -m venv env
 source env/bin/activate
-pip install -e .[dev]
+pip install -e ".[dev]"
 ```
 
 The tests can be run with:
