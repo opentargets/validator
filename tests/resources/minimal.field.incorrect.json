@@ -1,1 +1,1 @@
-{"firstName": "John","lastName": "Doe","age": -8, "unexpectedField": "foo"}
+{"firstName": "John","lastName": "Doe","age": 8, "unexpectedField": "foo"}

@@ -43,3 +43,10 @@ class MinimalTests(unittest.TestCase):
         with open_source(incorrect_filename) as data_fh, open_source(self.schema_uri) as schema_fh:
             valid = validate(data_fh, schema_fh)
             self.assertFalse(valid)
+
+    def test_required_fails(self):
+        """Incorrect data must raise a validation error."""
+        incorrect_filename = os.path.join(self.resources_path, "resources", "minimal.pattern.incorrect.json")
+        with open_source(incorrect_filename) as data_fh, open_source(self.schema_uri) as schema_fh:
+            valid = validate(data_fh, schema_fh)
+            self.assertFalse(valid)
