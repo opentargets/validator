@@ -1,6 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/opentargets-validator.svg)](https://badge.fury.io/py/opentargets-validator)
 [![CI](https://github.com/opentargets/validator/workflows/CI/badge.svg)](https://github.com/opentargets/validator/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
 
 # Open Targets JSON validator
 The `opentargets-validator` tool in this repository validates JSON files which are submitted to Open Targets by various [data sources](https://docs.targetvalidation.org/data-sources/data-sources) against the Open Targets [JSON schemas](https://github.com/opentargets/json_schema).
@@ -60,7 +59,7 @@ python -m pytest
 
 ## CI/CD and Releases
 
-This repository uses [GitHub Actions](https://github.com/opentargets/validator/actions) for continuous integration and [CodeCov](https://codecov.io/gh/opentargets/validator) for coverage reporting.
+This repository uses [GitHub Actions](https://github.com/opentargets/validator/actions) for continuous integration.
 
 Releases are automatically published to [PyPI](https://pypi.org/project/opentargets-validator) via GitHub Actions when tags are created.
 
