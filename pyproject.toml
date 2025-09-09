@@ -188,4 +188,5 @@ ignore = [
   'D213',    # we prefer D212
   'G004',    # we don't care about logging format
   'E226',    # allow omitting whitespace around arithmetic operators
+  'S101',    # allow assert statements (expected in tests)
 ]

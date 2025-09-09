@@ -21,7 +21,7 @@ class MinimalTests(unittest.TestCase):
             self.schema_uri,
         ) as schema_fh:
             valid = validate(data_fh, schema_fh)
-            self.assertTrue(valid)
+            assert valid
 
     def test_incorrect_fails(self):
         """Incorrect data must raise a validation error."""
@@ -32,7 +32,7 @@ class MinimalTests(unittest.TestCase):
             self.schema_uri,
         ) as schema_fh:
             valid = validate(data_fh, schema_fh)
-            self.assertFalse(valid)
+            assert not valid
 
     def test_enum_fails(self):
         """Incorrect data must raise a validation error."""
@@ -43,7 +43,7 @@ class MinimalTests(unittest.TestCase):
             self.schema_uri,
         ) as schema_fh:
             valid = validate(data_fh, schema_fh)
-            self.assertFalse(valid)
+            assert not valid
 
     def test_unexpected_field_fails(self):
         """Incorrect data must raise a validation error."""
@@ -54,7 +54,7 @@ class MinimalTests(unittest.TestCase):
             self.schema_uri,
         ) as schema_fh:
             valid = validate(data_fh, schema_fh)
-            self.assertFalse(valid)
+            assert not valid
 
     def test_pattern_fails(self):
         """Incorrect data must raise a validation error."""
@@ -65,7 +65,7 @@ class MinimalTests(unittest.TestCase):
             self.schema_uri,
         ) as schema_fh:
             valid = validate(data_fh, schema_fh)
-            self.assertFalse(valid)
+            assert not valid
 
     def test_required_fails(self):
         """Incorrect data must raise a validation error."""
@@ -76,4 +76,4 @@ class MinimalTests(unittest.TestCase):
             self.schema_uri,
         ) as schema_fh:
             valid = validate(data_fh, schema_fh)
-            self.assertFalse(valid)
+            assert not valid
