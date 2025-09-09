@@ -1,5 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/opentargets-validator.svg)](https://badge.fury.io/py/opentargets-validator)
-[![Build Status](https://travis-ci.org/opentargets/validator.svg?branch=master)](https://travis-ci.org/opentargets/validator)
+[![CI](https://github.com/opentargets/validator/workflows/CI/badge.svg)](https://github.com/opentargets/validator/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/opentargets/validator/branch/master/graph/badge.svg)](https://codecov.io/gh/opentargets/validator)
 
 # Open Targets JSON validator
@@ -9,6 +9,10 @@ The `opentargets-validator` tool in this repository validates JSON files which a
 ```bash
 pip install --upgrade opentargets-validator
 ```
+
+## Requirements
+- Python 3.8.1 or higher
+- Compatible with Python 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13
 
 ## Usage examples
 Validating a local gzipped file against the latest schema version from GitHub:
@@ -34,20 +38,38 @@ Either of the input files (data and schema) can be read from:
 * Uncompressed local file (`example.json`)
 * GZIP-compressed local file (`example.json.gz`)
 
-## Development instructions
-An editable copy can be installed within a virtual environment:
+## Development
+
+### Quick start with uv (recommended)
 ```bash
-python -m venv env
-source env/bin/activate
+# Install uv and dependencies
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv sync --dev
+
+# Run tests and linting
+uv run pytest
+uv run ruff check opentargets_validator tests
+```
+
+### Using pip
+```bash
+python -m venv env && source env/bin/activate
 pip install -e ".[dev]"
+python -m pytest
 ```
 
-The tests can be run with:
-```sh
-python -m pytest --cov=opentargets_validator --cov-report term tests/ --fulltrace
-```
-Note that you should always use `python -m pytest` and not `pytest`, because the latter might invoke a system-wide installation (if you have any) and cause incorrect test results.
+## CI/CD and Releases
 
-This repository has [Travis integration](https://travis-ci.com/opentargets/validator) and [CodeCov integration](https://codecov.io/gh/opentargets/validator).
+This repository uses [GitHub Actions](https://github.com/opentargets/validator/actions) for continuous integration and [CodeCov](https://codecov.io/gh/opentargets/validator) for coverage reporting.
 
-Releases are put on [PyPI](https://pypi.org/project/opentargets-validator) automatically via Travis from GitHub tags.
+Releases are automatically published to [PyPI](https://pypi.org/project/opentargets-validator) via GitHub Actions when tags are created.
+
+## Modern Python Tooling
+
+This project has been modernized with:
+- **`uv`** for fast dependency management and builds
+- **`ruff`** for lightning-fast linting and formatting
+- **`hatchling`** as the modern build backend
+- **`importlib.resources`** instead of deprecated `pkg_resources`
+- **GitHub Actions** for CI/CD instead of Travis CI
+- **`pyproject.toml`** for modern Python project configuration
