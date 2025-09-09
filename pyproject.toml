@@ -1,0 +1,97 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opentargets-validator"
+dynamic = ["version"]
+description = "Schema validation for evidence submitted to Open Targets"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Open Targets", email = "data@opentargets.org"}
+]
+maintainers = [
+    {name = "Open Targets", email = "data@opentargets.org"}
+]
+keywords = ["opentargets", "bioinformatics", "python3"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "fastjsonschema>=2.18.0",
+    "pathos>=0.3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "codecov",
+    "pytest",
+    "pytest-cov",
+    "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/opentargets/validator"
+Repository = "https://github.com/opentargets/validator"
+Documentation = "https://github.com/opentargets/validator#readme"
+"Bug Tracker" = "https://github.com/opentargets/validator/issues"
+
+[project.scripts]
+opentargets_validator = "opentargets_validator.cli:main"
+
+[tool.setuptools]
+packages = ["opentargets_validator", "opentargets_validator.resources"]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "opentargets_validator.version.__version__"}
+
+[tool.setuptools.package-data]
+opentargets_validator = ["resources/*.ini"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+]
+
+[tool.coverage.run]
+source = ["opentargets_validator"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
