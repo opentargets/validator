@@ -22,13 +22,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install toml package
-        run: pip install toml
-
       - name: Check version
         run: |
           # Read current version from PR branch
-          CURRENT_VERSION=$(python -c "import toml; print(toml.load('pyproject.toml')['project']['version'])")
+          CURRENT_VERSION=$(python -c "import sys; sys.path.append('.'); from opentargets_validator.version import __version__; print(__version__)")
           echo "Current version: $CURRENT_VERSION"
 
           # Checkout main branch to compare
@@ -36,7 +33,7 @@ jobs:
           git checkout origin/main
 
           # Read version from main branch
-          MAIN_VERSION=$(python -c "import toml; print(toml.load('pyproject.toml')['project']['version'])")
+          MAIN_VERSION=$(python -c "import sys; sys.path.append('.'); from opentargets_validator.version import __version__; print(__version__)")
           echo "Main version: $MAIN_VERSION"
 
           # Checkout back to PR branch
