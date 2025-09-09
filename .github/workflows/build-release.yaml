@@ -114,17 +114,19 @@ jobs:
     #   url: https://pypi.org/project/opentargets-validator
 
     steps:
-      - name: download distributions
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
+      - uses: actions/checkout@v4
 
       - name: install uv
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
           cache-dependency-glob: 'uv.lock'
+
+      - name: download distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
 
       - name: set up python
         uses: actions/setup-python@v5
