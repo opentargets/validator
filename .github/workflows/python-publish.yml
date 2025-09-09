@@ -12,6 +12,9 @@ permissions:
   contents: read
   id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
 
+env:
+  UV_CACHE_DIR: ~/.cache/uv
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,6 +33,17 @@ jobs:
 
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            .venv
+          key: ${{ runner.os }}-uv-${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ matrix.python-version }}-
+            ${{ runner.os }}-uv-
 
       - name: Install dependencies
         run: |
@@ -62,6 +76,17 @@ jobs:
       - name: Set up Python
         run: uv python install 3.11
 
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            .venv
+          key: ${{ runner.os }}-uv-3.11-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-3.11-
+            ${{ runner.os }}-uv-
+
       - name: Install build dependencies
         run: uv sync --dev --python 3.11
 
@@ -76,13 +101,15 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
+          retention-days: 1
 
   publish:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: pypi
-      url: https://pypi.org/project/opentargets-validator
+    # Note: Environment 'pypi' must be created in repository settings
+    # environment:
+    #   name: pypi
+    #   url: https://pypi.org/project/opentargets-validator
 
     steps:
       - name: Download distributions
@@ -91,7 +118,15 @@ jobs:
           name: python-package-distributions
           path: dist/
 
+      - name: Verify distributions
+        run: |
+          echo "Verifying distributions:"
+          ls -la dist/
+          echo "Checking package integrity:"
+          uv run twine check dist/*
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
+          print-hash: true
