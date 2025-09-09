@@ -51,6 +51,31 @@ The workflow will:
 
 If you need to release manually:
 
+### Using uv (Recommended)
+
+1. **Install uv** (if not already installed):
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+2. **Install dependencies and build**:
+   ```bash
+   uv sync --dev
+   uv build
+   ```
+
+3. **Check the package**:
+   ```bash
+   uv run twine check dist/*
+   ```
+
+4. **Upload to PyPI**:
+   ```bash
+   uv run twine upload dist/*
+   ```
+
+### Using pip (Legacy)
+
 1. **Install build tools**:
    ```bash
    pip install build twine
@@ -100,26 +125,57 @@ Examples:
 - `1.0.1` → `1.1.0` (new feature)
 - `1.1.0` → `2.0.0` (breaking change)
 
+## Development Workflow with uv
+
+### Setting up the development environment
+
+1. **Install uv**:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   uv sync --dev
+   ```
+
+3. **Run tests**:
+   ```bash
+   uv run pytest
+   ```
+
+4. **Run linting**:
+   ```bash
+   uv run flake8 opentargets_validator tests
+   uv run black --check opentargets_validator tests
+   uv run isort --check-only opentargets_validator tests
+   ```
+
+5. **Build the package**:
+   ```bash
+   uv build
+   ```
+
 ## Testing Before Release
 
 Before creating a release, ensure:
 
 1. **All tests pass**:
    ```bash
-   pytest
+   uv run pytest
    ```
 
 2. **Code quality checks pass**:
    ```bash
-   flake8 opentargets_validator tests
-   black --check opentargets_validator tests
-   isort --check-only opentargets_validator tests
+   uv run flake8 opentargets_validator tests
+   uv run black --check opentargets_validator tests
+   uv run isort --check-only opentargets_validator tests
    ```
 
 3. **Package builds successfully**:
    ```bash
-   python -m build
-   twine check dist/*
+   uv build
+   uv run twine check dist/*
    ```
 
 4. **Documentation is up to date** (if applicable)
