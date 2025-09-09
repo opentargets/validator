@@ -2,9 +2,9 @@ name: ci-pr
 
 on:
   push:
-    branches: [main, master]
+    branches: [master]
   pull_request:
-    branches: [main, master]
+    branches: [master]
 
 jobs:
   check-version:
@@ -28,20 +28,20 @@ jobs:
           CURRENT_VERSION=$(python -c "import sys; sys.path.append('.'); from opentargets_validator.version import __version__; print(__version__)")
           echo "Current version: $CURRENT_VERSION"
 
-          # Checkout main branch to compare
-          git fetch origin main
-          git checkout origin/main
+          # Checkout master branch to compare
+          git fetch origin master
+          git checkout origin/master
 
-          # Read version from main branch
-          MAIN_VERSION=$(python -c "import sys; sys.path.append('.'); from opentargets_validator.version import __version__; print(__version__)")
-          echo "Main version: $MAIN_VERSION"
+          # Read version from master branch
+          MASTER_VERSION=$(python -c "import sys; sys.path.append('.'); from opentargets_validator.version import __version__; print(__version__)")
+          echo "Master version: $MASTER_VERSION"
 
           # Checkout back to PR branch
           git checkout -
 
           # Compare versions
-          if [ "$CURRENT_VERSION" = "$MAIN_VERSION" ]; then
-            echo "Error: Version has not been bumped from $MAIN_VERSION"
+          if [ "$CURRENT_VERSION" = "$MASTER_VERSION" ]; then
+            echo "Error: Version has not been bumped from $MASTER_VERSION"
             exit 1
           fi
 
@@ -51,7 +51,7 @@ jobs:
             exit 1
           fi
 
-          echo "Version v$CURRENT_VERSION is new and has been bumped from v$MAIN_VERSION"
+          echo "Version v$CURRENT_VERSION is new and has been bumped from v$MASTER_VERSION"
 
   test:
     name: Run tests
