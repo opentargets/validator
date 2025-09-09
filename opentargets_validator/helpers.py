@@ -3,8 +3,7 @@ import io
 import os
 import sys
 import urllib.request
-
-import pkg_resources as res
+from importlib import resources
 
 import opentargets_validator
 
@@ -17,12 +16,20 @@ def file_or_resource(fname=None):
     if fname is not None:
         filename = os.path.expanduser(fname)
 
-        resource_package = opentargets_validator.__name__
-        resource_path = os.path.sep.join(("resources", filename))
-
         abs_filename = os.path.join(os.path.abspath(os.getcwd()), filename) if not os.path.isabs(filename) else filename
 
-        return abs_filename if os.path.isfile(abs_filename) else res.resource_filename(resource_package, resource_path)
+        if os.path.isfile(abs_filename):
+            return abs_filename
+        else:
+            # Use importlib.resources to get the resource file path
+            try:
+                # For Python 3.9+, use the modern approach
+                resource_path = resources.files(opentargets_validator).joinpath("resources", filename)
+                return str(resource_path)
+            except AttributeError:
+                # Fallback for older Python versions
+                with resources.path(opentargets_validator, os.path.join("resources", filename)) as path:
+                    return str(path)
 
 
 def open_source(source):
