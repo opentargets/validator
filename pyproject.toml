@@ -150,7 +150,6 @@ select = [
   'E',      # pycodestyle
   'F',      # pyflakes
   'N',      # pep8-naming
-  'Q',      # flake8-quotes
   'RUF',    # ruff
   'UP',     # pyupgrade
   'D',      # pydocstyle
@@ -164,7 +163,6 @@ select = [
   'ICN001', # flake8-import-conventions
   'B',      # flake8-bugbear
   'A001',   # flake8-builtins
-  'COM',    # flake8-commas
   'T10',    # flake8-debugger
   'T20',    # flake8-todo
   'EXE',    # flake8-executable

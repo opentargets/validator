@@ -11,7 +11,7 @@ from .helpers import box_text
 def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
     def format_error(error_type, e, line_index, line):
         logger.error(
-            "\nLine #%s %s:\n%s\n%s\n\n\n",
+            '\nLine #%s %s:\n%s\n%s\n\n\n',
             line_index,
             error_type,
             box_text(str(e)),
@@ -28,7 +28,7 @@ def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
         try:
             parsed_line = json.loads(line)
         except Exception as e:
-            format_error("is not a valid JSON object", e, line_index, line)
+            format_error('is not a valid JSON object', e, line_index, line)
             invalid += 1
             continue
 
@@ -37,7 +37,7 @@ def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
             validator(parsed_line)
         except Exception as e:
             format_error(
-                "is a valid JSON object, but it does not match the schema",
+                'is a valid JSON object, but it does not match the schema',
                 e,
                 line_index,
                 line,
@@ -66,7 +66,7 @@ def validate(data_fd, schema_fd):
     try:
         schema_contents = json.load(schema_fd)
     except Exception:
-        logger.exception("JSON schema is not valid.")
+        logger.exception('JSON schema is not valid.')
         return False
 
     # Compile the validator.
@@ -79,9 +79,7 @@ def validate(data_fd, schema_fd):
     # Package previous iterator into blocks of multiple lines to increase performance.
     blocked_iterator = batch_iterator(enumerated_iterator)
     # Final argument list iterator.
-    args_list_iterator = (
-        [line_block, validator, logger] for line_block in blocked_iterator
-    )
+    args_list_iterator = ([line_block, validator, logger] for line_block in blocked_iterator)
 
     # Validate all input lines concurrently.
     with pathos.multiprocessing.ProcessPool(
@@ -97,7 +95,7 @@ def validate(data_fd, schema_fd):
     # Process the results.
     valid, invalid = sum(v[0] for v in validity), sum(v[1] for v in validity)
     logger.info(
-        "Processing is completed. Total %s valid records, %s invalid records.",
+        'Processing is completed. Total %s valid records, %s invalid records.',
         valid,
         invalid,
     )
