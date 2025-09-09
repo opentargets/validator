@@ -1,9 +1,9 @@
 import gzip
 import io
-import os
 import sys
 import urllib.request
 from importlib import resources
+from pathlib import Path
 
 import opentargets_validator
 
@@ -14,22 +14,28 @@ def file_or_resource(fname=None):
     the package resources folder
     """
     if fname is not None:
-        filename = os.path.expanduser(fname)
+        filename = Path(fname).expanduser()
 
-        abs_filename = os.path.join(os.path.abspath(os.getcwd()), filename) if not os.path.isabs(filename) else filename
+        abs_filename = (
+            Path.cwd().resolve() / filename if not filename.is_absolute() else filename
+        )
 
-        if os.path.isfile(abs_filename):
-            return abs_filename
-        else:
-            # Use importlib.resources to get the resource file path
-            try:
-                # For Python 3.9+, use the modern approach
-                resource_path = resources.files(opentargets_validator).joinpath("resources", filename)
-                return str(resource_path)
-            except AttributeError:
-                # Fallback for older Python versions
-                with resources.path(opentargets_validator, os.path.join("resources", filename)) as path:
-                    return str(path)
+        if abs_filename.is_file():
+            return str(abs_filename)
+        # Use importlib.resources to get the resource file path
+        try:
+            # For Python 3.9+, use the modern approach
+            resource_path = resources.files(opentargets_validator).joinpath(
+                "resources", filename.name
+            )
+            return str(resource_path)
+        except AttributeError:
+            # Fallback for older Python versions
+            with resources.path(
+                opentargets_validator, f"resources/{filename.name}"
+            ) as path:
+                return str(path)
+    return None
 
 
 def open_source(source):
@@ -48,17 +54,17 @@ def open_source(source):
         return io.StringIO(url_source.read().decode(encoding))
     if source.endswith(".gz"):
         return gzip.open(source, "rt")
-    return open(source, "rt")
+    return Path(source).open()
 
 
 def box_text(s):
     lines = s.split("\n")
     max_width = max(map(len, lines))
-    boxed_lines = ["┃" + l.ljust(max_width) + "┃" for l in lines]
+    boxed_lines = ["┃" + line.ljust(max_width) + "┃" for line in lines]
     return "\n".join(
         [
             "┏" + "━" * max_width + "┓",
             *boxed_lines,
             "┗" + "━" * max_width + "┛",
-        ]
+        ],
     )

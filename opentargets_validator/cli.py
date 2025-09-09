@@ -9,7 +9,9 @@ from .version import __version__
 
 
 def main():
-    logging.config.fileConfig(file_or_resource("logging.ini"), disable_existing_loggers=False)
+    logging.config.fileConfig(
+        file_or_resource("logging.ini"), disable_existing_loggers=False
+    )
     logger = logging.getLogger(__name__)
 
     parser = argparse.ArgumentParser(
@@ -26,11 +28,21 @@ def main():
   * Remote uncompressed JSON (https://example.com/example.json)""",
     )
     input_files.add_argument(
-        "data", nargs="?", default="-", help="Data file to validate. If not specified, STDIN is the default."
+        "data",
+        nargs="?",
+        default="-",
+        help="Data file to validate. If not specified, STDIN is the default.",
     )
-    input_files.add_argument("--schema", required=True, help="Schema file to validate against. Mandatory.")
+    input_files.add_argument(
+        "--schema", required=True, help="Schema file to validate against. Mandatory."
+    )
 
-    parser.add_argument("--log-level", dest="loglevel", help="Log level. Default: %(default)s", default="INFO")
+    parser.add_argument(
+        "--log-level",
+        dest="loglevel",
+        help="Log level. Default: %(default)s",
+        default="INFO",
+    )
     parser.add_argument("-v", "-V", "--version", action="version", version=__version__)
     args = parser.parse_args()
 
@@ -39,8 +51,8 @@ def main():
             root_logger = logging.getLogger()
             root_logger.setLevel(logging.getLevelName(args.loglevel))
             logger.setLevel(logging.getLevelName(args.loglevel))
-        except Exception as e:
-            root_logger.exception(e)
+        except Exception:
+            root_logger.exception("Failed to set log level")
 
     data = open_source(args.data)
     schema = open_source(args.schema)

@@ -144,11 +144,10 @@ Examples:
    uv run pytest
    ```
 
-4. **Run linting**:
+4. **Run linting and formatting**:
    ```bash
-   uv run flake8 opentargets_validator tests
-   uv run black --check opentargets_validator tests
-   uv run isort --check-only opentargets_validator tests
+   uv run ruff check opentargets_validator tests
+   uv run ruff format --check opentargets_validator tests
    ```
 
 5. **Build the package**:
@@ -167,9 +166,8 @@ Before creating a release, ensure:
 
 2. **Code quality checks pass**:
    ```bash
-   uv run flake8 opentargets_validator tests
-   uv run black --check opentargets_validator tests
-   uv run isort --check-only opentargets_validator tests
+   uv run ruff check opentargets_validator tests
+   uv run ruff format --check opentargets_validator tests
    ```
 
 3. **Package builds successfully**:

@@ -60,16 +60,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --dev --python 3.11
 
-      - name: Run flake8
-        run: |
-          uv run flake8 opentargets_validator tests --count --select=E9,F63,F7,F82 --show-source --statistics
-          uv run flake8 opentargets_validator tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Run ruff linting
+        run: uv run ruff check opentargets_validator tests
 
-      - name: Check code formatting with black
-        run: uv run black --check opentargets_validator tests
-
-      - name: Check import sorting with isort
-        run: uv run isort --check-only opentargets_validator tests
+      - name: Check code formatting with ruff
+        run: uv run ruff format --check opentargets_validator tests
 
   build-test:
     runs-on: ubuntu-latest

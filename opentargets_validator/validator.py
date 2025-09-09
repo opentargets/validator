@@ -8,20 +8,26 @@ from .helpers import box_text
 
 
 def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
-    def format_error(error_type, e):
-        logger.error(f"\nLine #{line_index} {error_type}:\n{box_text(str(e))}\n{line}\n\n\n")
+    def format_error(error_type, e, line_index, line):
+        logger.error(
+            "\nLine #%s %s:\n%s\n%s\n\n\n",
+            line_index,
+            error_type,
+            box_text(str(e)),
+            line,
+        )
 
     valid, invalid = 0, 0
 
-    for line_index, line in list_of_lines_with_indexes:
+    for line_index, raw_line in list_of_lines_with_indexes:
         # Lines come directly from file object-like iterators, so we should strip the end of line characters.
-        line = line.rstrip()
+        line = raw_line.rstrip()
 
         # Does the line contain a valid JSON object at all?
         try:
             parsed_line = json.loads(line)
         except Exception as e:
-            format_error("is not a valid JSON object", e)
+            format_error("is not a valid JSON object", e, line_index, line)
             invalid += 1
             continue
 
@@ -29,7 +35,12 @@ def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
         try:
             validator(parsed_line)
         except Exception as e:
-            format_error("is a valid JSON object, but it does not match the schema", e)
+            format_error(
+                "is a valid JSON object, but it does not match the schema",
+                e,
+                line_index,
+                line,
+            )
             invalid += 1
             continue
 
@@ -54,7 +65,7 @@ def validate(data_fd, schema_fd):
     try:
         schema_contents = json.load(schema_fd)
     except Exception as e:
-        logger.error(f"JSON schema is not valid. Error: ~~~{e}~~~.")
+        logger.exception("JSON schema is not valid. Error: ~~~%s~~~.", str(e))
         return False
 
     # Compile the validator.
@@ -67,16 +78,26 @@ def validate(data_fd, schema_fd):
     # Package previous iterator into blocks of multiple lines to increase performance.
     blocked_iterator = batch_iterator(enumerated_iterator)
     # Final argument list iterator.
-    args_list_iterator = ([line_block, validator, logger] for line_block in blocked_iterator)
+    args_list_iterator = (
+        [line_block, validator, logger] for line_block in blocked_iterator
+    )
 
     # Validate all input lines concurrently.
-    with pathos.multiprocessing.ProcessPool(processes=pathos.multiprocessing.cpu_count()) as pool:
-        validity = list(pool.imap(
-            lambda args: validate_block_of_lines(*args),
-            args_list_iterator,
-        ))
+    with pathos.multiprocessing.ProcessPool(
+        processes=pathos.multiprocessing.cpu_count()
+    ) as pool:
+        validity = list(
+            pool.imap(
+                lambda args: validate_block_of_lines(*args),
+                args_list_iterator,
+            )
+        )
 
     # Process the results.
     valid, invalid = sum([v[0] for v in validity]), sum([v[1] for v in validity])
-    logger.info(f"Processing is completed. Total {valid} valid records, {invalid} invalid records.")
+    logger.info(
+        "Processing is completed. Total %s valid records, %s invalid records.",
+        valid,
+        invalid,
+    )
     return invalid == 0
