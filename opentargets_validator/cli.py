@@ -10,7 +10,7 @@ from .version import __version__
 
 def main():
     logging.config.fileConfig(
-        file_or_resource("logging.ini"), disable_existing_loggers=False
+        file_or_resource("logging.ini"), disable_existing_loggers=False,
     )
     logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def main():
         help="Data file to validate. If not specified, STDIN is the default.",
     )
     input_files.add_argument(
-        "--schema", required=True, help="Schema file to validate against. Mandatory."
+        "--schema", required=True, help="Schema file to validate against. Mandatory.",
     )
 
     parser.add_argument(

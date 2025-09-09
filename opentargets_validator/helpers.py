@@ -9,10 +9,7 @@ import opentargets_validator
 
 
 def file_or_resource(fname=None):
-    """
-    get filename and check if in getcwd then get from
-    the package resources folder
-    """
+    """Get filename and check if in getcwd then get from the package resources folder."""
     if fname is not None:
         filename = Path(fname).expanduser()
 
@@ -26,21 +23,20 @@ def file_or_resource(fname=None):
         try:
             # For Python 3.9+, use the modern approach
             resource_path = resources.files(opentargets_validator).joinpath(
-                "resources", filename.name
+                "resources", filename.name,
             )
             return str(resource_path)
         except AttributeError:
             # Fallback for older Python versions
             with resources.path(
-                opentargets_validator, f"resources/{filename.name}"
+                opentargets_validator, f"resources/{filename.name}",
             ) as path:
                 return str(path)
     return None
 
 
 def open_source(source):
-    """Opens a data source and returns a file handler-like object."""
-
+    """Open a data source and return a file handler-like object."""
     # Legacy way of specifying local files, needs to be stripped.
     if source.startswith("file://"):
         source = source[7:]
@@ -49,12 +45,12 @@ def open_source(source):
     if source == "-":
         return sys.stdin
     if "://" in source:
-        url_source = urllib.request.urlopen(source)
+        url_source = urllib.request.urlopen(source)  # noqa: S310
         encoding = url_source.headers.get_content_charset()
         return io.StringIO(url_source.read().decode(encoding))
     if source.endswith(".gz"):
         return gzip.open(source, "rt")
-    return Path(source).open()
+    return Path(source).open(encoding="utf-8")
 
 
 def box_text(s):

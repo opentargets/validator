@@ -2,7 +2,7 @@
 [![CI](https://github.com/opentargets/validator/workflows/CI/badge.svg)](https://github.com/opentargets/validator/actions/workflows/ci.yml)
 
 # Open Targets JSON validator
-The `opentargets-validator` tool in this repository validates JSON files which are submitted to Open Targets by various [data sources](https://docs.targetvalidation.org/data-sources/data-sources) against the Open Targets [JSON schemas](https://github.com/opentargets/json_schema).
+The `opentargets-validator` tool in this repository validates JSON files which are submitted to Open Targets by various [data sources](https://platform-docs.opentargets.org/evidence) against the Open Targets [JSON schemas](https://github.com/opentargets/json_schema).
 
 ## Installation
 ```bash

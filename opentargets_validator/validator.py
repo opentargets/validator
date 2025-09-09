@@ -1,8 +1,9 @@
 import itertools
 import json
 import logging
-import pathos.multiprocessing
+
 import fastjsonschema
+import pathos.multiprocessing
 
 from .helpers import box_text
 
@@ -64,8 +65,8 @@ def validate(data_fd, schema_fd):
     # Load the schema and check if it is itself valid.
     try:
         schema_contents = json.load(schema_fd)
-    except Exception as e:
-        logger.exception("JSON schema is not valid. Error: ~~~%s~~~.", str(e))
+    except Exception:
+        logger.exception("JSON schema is not valid.")
         return False
 
     # Compile the validator.
@@ -84,17 +85,17 @@ def validate(data_fd, schema_fd):
 
     # Validate all input lines concurrently.
     with pathos.multiprocessing.ProcessPool(
-        processes=pathos.multiprocessing.cpu_count()
+        processes=pathos.multiprocessing.cpu_count(),
     ) as pool:
         validity = list(
             pool.imap(
                 lambda args: validate_block_of_lines(*args),
                 args_list_iterator,
-            )
+            ),
         )
 
     # Process the results.
-    valid, invalid = sum([v[0] for v in validity]), sum([v[1] for v in validity])
+    valid, invalid = sum(v[0] for v in validity), sum(v[1] for v in validity)
     logger.info(
         "Processing is completed. Total %s valid records, %s invalid records.",
         valid,
