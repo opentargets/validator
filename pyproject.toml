@@ -1,0 +1,190 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opentargets-validator"
+dynamic = ["version"]
+description = "Schema validation for evidence submitted to Open Targets"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Open Targets", email = "data@opentargets.org"}
+]
+maintainers = [
+    {name = "Open Targets", email = "data@opentargets.org"}
+]
+keywords = ["opentargets", "bioinformatics", "python3"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.8.1"
+dependencies = [
+    "fastjsonschema>=2.18.0",
+    "pathos>=0.3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "codecov",
+    "pytest",
+    "pytest-cov",
+    "twine",
+    "uv",
+    "ruff",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+]
+lint = [
+    "ruff",
+    "mypy",
+]
+build = [
+    "build",
+    "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/opentargets/validator"
+Repository = "https://github.com/opentargets/validator"
+Documentation = "https://github.com/opentargets/validator#readme"
+"Bug Tracker" = "https://github.com/opentargets/validator/issues"
+
+[project.scripts]
+opentargets_validator = "opentargets_validator.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["opentargets_validator"]
+
+[tool.hatch.build.targets.wheel.sources]
+"opentargets_validator" = "opentargets_validator"
+
+[tool.hatch.build.targets.wheel.force-include]
+"opentargets_validator/resources" = "opentargets_validator/resources"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/opentargets_validator",
+    "/tests",
+    "/scripts",
+    "/README.md",
+    "/LICENSE",
+]
+
+[tool.hatch.version]
+path = "opentargets_validator/version.py"
+
+
+# uv configuration
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "build>=0.10.0",
+    "twine>=4.0.0",
+    "codecov>=2.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+]
+
+[tool.coverage.run]
+source = ["opentargets_validator"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+# Ruff configuration (mimicking Open Targets PTS project)
+[tool.ruff]
+target-version = 'py38'
+line-length = 120
+preview = true
+
+[tool.ruff.format]
+quote-style = 'single'
+
+[tool.ruff.lint]
+select = [
+  'E',      # pycodestyle
+  'F',      # pyflakes
+  'N',      # pep8-naming
+  'RUF',    # ruff
+  'UP',     # pyupgrade
+  'D',      # pydocstyle
+  'D212',   # flake8-docstrings
+  'S',      # flake8-bandit
+  'C4',     # flake8-comprehensions
+  'INT',    # flake8-gettext
+  'LOG',    # flake8-logging
+  'G',      # flake8-logging-format
+  'I',      # isort
+  'ICN001', # flake8-import-conventions
+  'B',      # flake8-bugbear
+  'A001',   # flake8-builtins
+  'T10',    # flake8-debugger
+  'T20',    # flake8-todo
+  'EXE',    # flake8-executable
+  'ISC',    # flake8-implicit-str-concat
+  'PIE',    # flake8-pie
+  'PT',     # flake8-pytest-style
+  'RSE',    # flake8-raise
+  'RET504', # flake8-return
+  'SIM',    # flake8-simplify
+  'TID',    # flake8-tidy-imports
+  'PGH',    # pygrep-hooks
+  'PL',     # pylint
+  'TRY',    # tryceratops
+  'PERF',   # perflint
+  'FURB',   # refurb
+  'W',      # pycodestyle
+]
+
+ignore = [
+  'D1',      # allow lax documentation
+  'D213',    # we prefer D212
+  'G004',    # we don't care about logging format
+  'E226',    # allow omitting whitespace around arithmetic operators
+  'S101',    # allow assert statements (expected in tests)
+]

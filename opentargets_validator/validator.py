@@ -1,27 +1,34 @@
 import itertools
 import json
 import logging
-import pathos.multiprocessing
+
 import fastjsonschema
+import pathos.multiprocessing
 
 from .helpers import box_text
 
 
 def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
-    def format_error(error_type, e):
-        logger.error(f"\nLine #{line_index} {error_type}:\n{box_text(str(e))}\n{line}\n\n\n")
+    def format_error(error_type, e, line_index, line):
+        logger.error(
+            '\nLine #%s %s:\n%s\n%s\n\n\n',
+            line_index,
+            error_type,
+            box_text(str(e)),
+            line,
+        )
 
     valid, invalid = 0, 0
 
-    for line_index, line in list_of_lines_with_indexes:
+    for line_index, raw_line in list_of_lines_with_indexes:
         # Lines come directly from file object-like iterators, so we should strip the end of line characters.
-        line = line.rstrip()
+        line = raw_line.rstrip()
 
         # Does the line contain a valid JSON object at all?
         try:
             parsed_line = json.loads(line)
         except Exception as e:
-            format_error("is not a valid JSON object", e)
+            format_error('is not a valid JSON object', e, line_index, line)
             invalid += 1
             continue
 
@@ -29,7 +36,12 @@ def validate_block_of_lines(list_of_lines_with_indexes, validator, logger):
         try:
             validator(parsed_line)
         except Exception as e:
-            format_error("is a valid JSON object, but it does not match the schema", e)
+            format_error(
+                'is a valid JSON object, but it does not match the schema',
+                e,
+                line_index,
+                line,
+            )
             invalid += 1
             continue
 
@@ -53,8 +65,8 @@ def validate(data_fd, schema_fd):
     # Load the schema and check if it is itself valid.
     try:
         schema_contents = json.load(schema_fd)
-    except Exception as e:
-        logger.error(f"JSON schema is not valid. Error: ~~~{e}~~~.")
+    except Exception:
+        logger.exception('JSON schema is not valid.')
         return False
 
     # Compile the validator.
@@ -70,13 +82,21 @@ def validate(data_fd, schema_fd):
     args_list_iterator = ([line_block, validator, logger] for line_block in blocked_iterator)
 
     # Validate all input lines concurrently.
-    with pathos.multiprocessing.ProcessPool(processes=pathos.multiprocessing.cpu_count()) as pool:
-        validity = list(pool.imap(
-            lambda args: validate_block_of_lines(*args),
-            args_list_iterator,
-        ))
+    with pathos.multiprocessing.ProcessPool(
+        processes=pathos.multiprocessing.cpu_count(),
+    ) as pool:
+        validity = list(
+            pool.imap(
+                lambda args: validate_block_of_lines(*args),
+                args_list_iterator,
+            ),
+        )
 
     # Process the results.
-    valid, invalid = sum([v[0] for v in validity]), sum([v[1] for v in validity])
-    logger.info(f"Processing is completed. Total {valid} valid records, {invalid} invalid records.")
+    valid, invalid = sum(v[0] for v in validity), sum(v[1] for v in validity)
+    logger.info(
+        'Processing is completed. Total %s valid records, %s invalid records.',
+        valid,
+        invalid,
+    )
     return invalid == 0
