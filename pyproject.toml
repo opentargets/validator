@@ -72,12 +72,6 @@ opentargets_validator = "opentargets_validator.cli:main"
 [tool.hatch.build.targets.wheel]
 packages = ["opentargets_validator"]
 
-[tool.hatch.build.targets.wheel.sources]
-"opentargets_validator" = "opentargets_validator"
-
-[tool.hatch.build.targets.wheel.force-include]
-"opentargets_validator/resources" = "opentargets_validator/resources"
-
 [tool.hatch.build.targets.sdist]
 include = [
     "/opentargets_validator",
